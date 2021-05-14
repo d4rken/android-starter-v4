@@ -28,22 +28,25 @@ class BugReporter @Inject constructor(
         val isEnabled = bugReporterSettings.isEnabled.value
         Timber.tag(TAG).d("setup(): isEnabled=$isEnabled")
 
-
-        val bugsnagConfig = Configuration.load(context).apply {
-            if (bugReporterSettings.isEnabled.value) {
-                Timber.plant(bugsnagTree.get())
-                setUser(installId.id, null, null)
-                autoTrackSessions = true
-                addOnError(bugsnagErrorHandler.get())
-                Timber.tag(TAG).i("Bugsnag setup done!")
-            } else {
-                autoTrackSessions = false
-                addOnError(nopBugsnagErrorHandler.get())
-                Timber.tag(TAG).i("Installing Bugsnag NOP error handler due to user opt-out!")
+        try {
+            val bugsnagConfig = Configuration.load(context).apply {
+                if (bugReporterSettings.isEnabled.value) {
+                    Timber.plant(bugsnagTree.get())
+                    setUser(installId.id, null, null)
+                    autoTrackSessions = true
+                    addOnError(bugsnagErrorHandler.get())
+                    Timber.tag(TAG).i("Bugsnag setup done!")
+                } else {
+                    autoTrackSessions = false
+                    addOnError(nopBugsnagErrorHandler.get())
+                    Timber.tag(TAG).i("Installing Bugsnag NOP error handler due to user opt-out!")
+                }
             }
-        }
 
-        Bugsnag.start(context, bugsnagConfig)
+            Bugsnag.start(context, bugsnagConfig)
+        } catch (e: IllegalStateException) {
+            Timber.tag(TAG).w("Bugsnag API Key not configured.")
+        }
     }
 
     companion object {
