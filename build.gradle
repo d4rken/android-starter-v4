@@ -28,7 +28,6 @@ buildscript {
             'androidx'   : [
                     'navigation': '2.3.5'
             ],
-            'timber'     : '4.7.1',
     ]
 
     repositories {

@@ -2,11 +2,12 @@ package eu.darken.androidstarter.common.preferences
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import timber.log.Timber
+import eu.darken.androidstarter.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.androidstarter.common.debug.logging.log
 
 fun SharedPreferences.clearAndNotify() {
     val currentKeys = this.all.keys.toSet()
-    Timber.v("%s clearAndNotify(): %s", this, currentKeys)
+    log(VERBOSE) { "$this clearAndNotify(): $currentKeys" }
     edit {
         currentKeys.forEach { remove(it) }
     }

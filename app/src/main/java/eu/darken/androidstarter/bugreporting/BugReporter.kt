@@ -6,10 +6,11 @@ import com.bugsnag.android.Configuration
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.androidstarter.App
 import eu.darken.androidstarter.common.InstallId
-import eu.darken.androidstarter.common.debugging.BugsnagErrorHandler
-import eu.darken.androidstarter.common.debugging.BugsnagTree
-import eu.darken.androidstarter.common.debugging.NOPBugsnagErrorHandler
-import timber.log.Timber
+import eu.darken.androidstarter.common.debug.bugsnag.BugsnagErrorHandler
+import eu.darken.androidstarter.common.debug.bugsnag.BugsnagLogger
+import eu.darken.androidstarter.common.debug.bugsnag.NOPBugsnagErrorHandler
+import eu.darken.androidstarter.common.debug.logging.Logging
+import eu.darken.androidstarter.common.debug.logging.log
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -19,33 +20,33 @@ class BugReporter @Inject constructor(
     @ApplicationContext private val context: Context,
     private val bugReporterSettings: BugReporterSettings,
     private val installId: InstallId,
-    private val bugsnagTree: Provider<BugsnagTree>,
+    private val bugsnagLogger: Provider<BugsnagLogger>,
     private val bugsnagErrorHandler: Provider<BugsnagErrorHandler>,
     private val nopBugsnagErrorHandler: Provider<NOPBugsnagErrorHandler>,
 ) {
 
     fun setup() {
         val isEnabled = bugReporterSettings.isEnabled.value
-        Timber.tag(TAG).d("setup(): isEnabled=$isEnabled")
+        log(TAG) { "setup(): isEnabled=$isEnabled" }
 
         try {
             val bugsnagConfig = Configuration.load(context).apply {
                 if (bugReporterSettings.isEnabled.value) {
-                    Timber.plant(bugsnagTree.get())
+                    Logging.install(bugsnagLogger.get())
                     setUser(installId.id, null, null)
                     autoTrackSessions = true
                     addOnError(bugsnagErrorHandler.get())
-                    Timber.tag(TAG).i("Bugsnag setup done!")
+                    log(TAG) { "Bugsnag setup done!" }
                 } else {
                     autoTrackSessions = false
                     addOnError(nopBugsnagErrorHandler.get())
-                    Timber.tag(TAG).i("Installing Bugsnag NOP error handler due to user opt-out!")
+                    log(TAG) { "Installing Bugsnag NOP error handler due to user opt-out!" }
                 }
             }
 
             Bugsnag.start(context, bugsnagConfig)
         } catch (e: IllegalStateException) {
-            Timber.tag(TAG).w("Bugsnag API Key not configured.")
+            log(TAG) { "Bugsnag API Key not configured." }
         }
     }
 

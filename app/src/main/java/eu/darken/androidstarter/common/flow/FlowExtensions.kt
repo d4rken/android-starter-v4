@@ -1,8 +1,9 @@
 package eu.darken.androidstarter.common.flow
 
+import eu.darken.androidstarter.common.debug.logging.asLog
+import eu.darken.androidstarter.common.debug.logging.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
-import timber.log.Timber
 
 /**
  * Create a stateful flow, with the initial value of null, but never emits a null value.
@@ -15,16 +16,16 @@ fun <T : Any> Flow<T>.shareLatest(
     started: SharingStarted = SharingStarted.WhileSubscribed(replayExpirationMillis = 0)
 ) = this
     .onStart {
-        if (tag != null) Timber.tag(tag).v("shareLatest(...) start")
+        if (tag != null) log(tag) { "shareLatest(...) start" }
     }
     .onEach {
-        if (tag != null) Timber.tag(tag).v("shareLatest(...) emission: %s", it)
+        if (tag != null) log(tag) { "shareLatest(...) emission: $it" }
     }
     .onCompletion {
-        if (tag != null) Timber.tag(tag).v("shareLatest(...) completed.")
+        if (tag != null) log(tag) { "shareLatest(...) completed." }
     }
     .catch {
-        if (tag != null) Timber.tag(tag).w(it, "shareLatest(...) catch()!.")
+        if (tag != null) log(tag) { "shareLatest(...) catch(): ${it.asLog()}" }
         throw it
     }
     .stateIn(

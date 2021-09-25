@@ -3,11 +3,12 @@ package eu.darken.androidstarter.main.ui
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.androidstarter.common.coroutine.DispatcherProvider
+import eu.darken.androidstarter.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.androidstarter.common.debug.logging.log
 import eu.darken.androidstarter.common.viewmodel.SmartVM
 import eu.darken.androidstarter.main.core.SomeRepo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onEach
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -20,13 +21,13 @@ class MainActivityVM @Inject constructor(
 
     private val stateFlow = MutableStateFlow(State())
     val state = stateFlow
-        .onEach { Timber.v("New state: %s", it) }
+        .onEach { log(VERBOSE) { "New state: $it" } }
         .asLiveData2()
 
     init {
-        Timber.d("ViewModel: %s", this)
-        Timber.d("SavedStateHandle: %s", handle.keys())
-        Timber.d("Persisted value: %s", handle.get<String>("key"))
+        log { "ViewModel: $ this" }
+        log { "SavedStateHandle: ${handle.keys()}" }
+        log { "Persisted value: ${handle.get<String>("key")}" }
         handle.set("key", "valueActivity")
     }
 

@@ -140,12 +140,9 @@ dependencies {
         exclude group: "org.jetbrains.kotlinx", module: "kotlinx-coroutines-debug"
     }
 
-
     // Debugging
-    implementation "com.jakewharton.timber:timber:5.0.1"
     implementation ('com.bugsnag:bugsnag-android:5.9.2')
     implementation 'com.getkeepsafe.relinker:relinker:1.4.3'
-
 
     // DI
     implementation "com.google.dagger:dagger:${versions.dagger.core}"

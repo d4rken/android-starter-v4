@@ -9,14 +9,16 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import timber.log.Timber
+import eu.darken.androidstarter.common.debug.logging.Logging.Priority.WARN
+import eu.darken.androidstarter.common.debug.logging.asLog
+import eu.darken.androidstarter.common.debug.logging.log
 
 fun Fragment.doNavigate(direction: NavDirections) = findNavController().doNavigate(direction)
 
 fun Fragment.popBackStack(): Boolean {
     if (!isAdded) {
         IllegalStateException("Fragment is not added").also {
-            Timber.w(it, "Trying to pop backstack on Fragment that isn't added to an Activity.")
+            log(WARN) { "Trying to pop backstack on Fragment that isn't added to an Activity: ${it.asLog()}" }
         }
         return false
     }

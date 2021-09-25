@@ -1,14 +1,17 @@
 package testhelper
 
+import eu.darken.androidstarter.common.debug.logging.Logging
+import eu.darken.androidstarter.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.androidstarter.common.debug.logging.log
 import io.mockk.unmockkAll
 import org.junit.jupiter.api.AfterAll
-import timber.log.Timber
+import testhelpers.logging.JUnitLogger
 
 
 open class BaseTest {
     init {
-        Timber.uprootAll()
-        Timber.plant(JUnitTree())
+        Logging.clearAll()
+        Logging.install(JUnitLogger())
         testClassName = this.javaClass.simpleName
     }
 
@@ -19,8 +22,8 @@ open class BaseTest {
         @AfterAll
         fun onTestClassFinished() {
             unmockkAll()
-            Timber.tag(testClassName!!).v("onTestClassFinished()")
-            Timber.uprootAll()
+            log(testClassName!!, VERBOSE) { "onTestClassFinished()" }
+            Logging.clearAll()
         }
     }
 }

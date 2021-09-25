@@ -4,35 +4,35 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import eu.darken.androidstarter.App
-import timber.log.Timber
+import eu.darken.androidstarter.common.debug.logging.log
 
 abstract class SmartActivity : AppCompatActivity() {
     internal val tag: String =
         App.logTag("Activity", this.javaClass.simpleName + "(" + Integer.toHexString(hashCode()) + ")")
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.tag(tag).v("onCreate(savedInstanceState=$savedInstanceState)")
+        log(tag) { "onCreate(savedInstanceState=$savedInstanceState)" }
         super.onCreate(savedInstanceState)
     }
 
     override fun onResume() {
-        Timber.tag(tag).v("onResume()")
+        log(tag) { "onResume()" }
         super.onResume()
     }
 
     override fun onPause() {
-        Timber.tag(tag).v("onPause()")
+        log(tag) { "onPause()" }
         super.onPause()
     }
 
     override fun onDestroy() {
-        Timber.tag(tag).v("onDestroy()")
+        log(tag) { "onDestroy()" }
         super.onDestroy()
     }
 
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Timber.tag(tag).v("onActivityResult(requestCode=%d, resultCode=%d, data=%s)", requestCode, resultCode, data)
+        log(tag) { "onActivityResult(requestCode=$requestCode, resultCode=$resultCode, data=data)" }
         super.onActivityResult(requestCode, resultCode, data)
     }
 

@@ -1,6 +1,8 @@
 package eu.darken.androidstarter.common.flow
 
-import eu.darken.androidstarter.common.logging.v
+import eu.darken.androidstarter.common.debug.logging.Logging.Priority.VERBOSE
+import eu.darken.androidstarter.common.debug.logging.asLog
+import eu.darken.androidstarter.common.debug.logging.log
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
@@ -28,10 +30,9 @@ class HotDataFlow<T : Any>(
     private val startValueProvider: suspend CoroutineScope.() -> T
 ) {
     private val tag = loggingTag?.let { "$it:HDF" }
-    private val doLog = tag != null
 
     init {
-        if (doLog) v(tag) { "init()" }
+        if (tag != null) log(tag, VERBOSE) { "init()" }
     }
 
     private val updateActions = MutableSharedFlow<Update<T>>(
@@ -43,20 +44,20 @@ class HotDataFlow<T : Any>(
 
     private val internalProducer: Flow<State<T>> = channelFlow {
         var currentValue = valueGuard.withLock {
-            if (doLog) v(tag) { "Providing startValue..." }
+            if (tag != null) log(tag, VERBOSE) { "Providing startValue..." }
             startValueProvider().also {
-                if (doLog) v(tag) { "...startValue provided, emitting $it" }
+                if (tag != null) log(tag, VERBOSE) { "...startValue provided, emitting $it" }
                 val initializer = Update<T>(onError = null, onModify = { it })
 
                 send(State(value = it, updatedBy = initializer))
             }
         }
 
-        if (doLog) v(tag) { "...startValue provided and emitted." }
+        if (tag != null) log(tag, VERBOSE) { "...startValue provided and emitted." }
 
         updateActions
             .onCompletion {
-                if (doLog) v(tag) { "updateActions onCompletion -> resetReplayCache()" }
+                if (tag != null) log(tag, VERBOSE) { "updateActions onCompletion -> resetReplayCache()" }
                 updateActions.resetReplayCache()
             }
             .collect { update ->
@@ -66,7 +67,9 @@ class HotDataFlow<T : Any>(
                             send(State(value = it, updatedBy = update))
                         }
                     } catch (e: Exception) {
-                        if (doLog) v(tag, e) { "Data modifying failed (onError=${update.onError})" }
+                        if (tag != null) log(tag, VERBOSE) {
+                            "Data modifying failed (onError=${update.onError}): ${e.asLog()}"
+                        }
 
                         if (update.onError != null) {
                             update.onError.invoke(e)
@@ -78,16 +81,21 @@ class HotDataFlow<T : Any>(
                 }
             }
 
-        if (doLog) v(tag) { "internal channelFlow finished." }
+        if (tag != null) log(tag, VERBOSE) { "internal channelFlow finished." }
     }
 
     private val internalFlow = internalProducer
-        .onStart { if (doLog) v(tag) { "Internal onStart" } }
+        .onStart { if (tag != null) log(tag, VERBOSE) { "Internal onStart" } }
         .onCompletion { err ->
             when {
-                err is CancellationException -> if (doLog) v(tag) { "internal onCompletion() due to cancellation" }
-                err != null -> if (doLog) v(tag, err) { "internal onCompletion() due to error" }
-                else -> if (doLog) v(tag) { "internal onCompletion()" }
+                err is CancellationException -> if (tag != null) log(
+                    tag,
+                    VERBOSE
+                ) { "internal onCompletion() due to cancellation" }
+                err != null -> if (tag != null) log(tag, VERBOSE) {
+                    "internal onCompletion() due to error: ${err.asLog()}"
+                }
+                else -> if (tag != null) log(tag, VERBOSE) { "internal onCompletion()" }
             }
         }
         .shareIn(
@@ -128,7 +136,7 @@ class HotDataFlow<T : Any>(
         val update: Update<T> = Update(onModify = action)
         updateActions.emit(update)
 
-        if (doLog) v(tag) { "Waiting for update." }
+        if (tag != null) log(tag, VERBOSE) { "Waiting for update." }
         val ourUpdate = internalFlow.first { it.updatedBy == update }
 
         ourUpdate.error?.let { throw it }

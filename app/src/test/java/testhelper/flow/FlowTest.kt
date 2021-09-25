@@ -1,12 +1,14 @@
 package testhelper.flow
 
+import eu.darken.androidstarter.common.debug.logging.Logging.Priority.WARN
+import eu.darken.androidstarter.common.debug.logging.asLog
+import eu.darken.androidstarter.common.debug.logging.log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.test.TestCoroutineScope
-import timber.log.Timber
 
 fun <T> Flow<T>.test(
     tag: String? = null,
@@ -38,18 +40,18 @@ class TestCollector<T>(
     fun start(scope: CoroutineScope) = apply {
         flow
             .buffer(capacity = Int.MAX_VALUE)
-            .onStart { Timber.tag(tag).v("Setting up.") }
-            .onCompletion { Timber.tag(tag).d("Final.") }
+            .onStart { log(tag) { "Setting up." } }
+            .onCompletion { log(tag) { "Final." } }
             .onEach {
                 collectedValuesMutex.withLock {
-                    if (!silent) Timber.tag(tag).v("Collecting: %s", it)
+                    if (!silent) log(tag) { "Collecting: $it" }
                     latestInternal = it
                     collectedValues.add(it)
                     cache.emit(it)
                 }
             }
             .catch { e ->
-                Timber.tag(tag).w(e, "Caught error.")
+                log(tag, WARN) { "Caught error: ${e.asLog()}" }
                 error = e
             }
             .launchIn(scope)

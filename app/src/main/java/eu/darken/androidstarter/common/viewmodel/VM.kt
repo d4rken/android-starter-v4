@@ -3,18 +3,18 @@ package eu.darken.androidstarter.common.viewmodel
 import androidx.annotation.CallSuper
 import androidx.lifecycle.ViewModel
 import eu.darken.androidstarter.App
-import timber.log.Timber
+import eu.darken.androidstarter.common.debug.logging.log
 
 abstract class VM : ViewModel() {
     val TAG: String = App.logTag("VM", javaClass.simpleName)
 
     init {
-        Timber.tag(TAG).v("Initialized")
+        log(TAG) { "Initialized" }
     }
 
     @CallSuper
     override fun onCleared() {
-        Timber.tag(TAG).v("onCleared()")
+        log(TAG) { "onCleared()" }
         super.onCleared()
     }
 }

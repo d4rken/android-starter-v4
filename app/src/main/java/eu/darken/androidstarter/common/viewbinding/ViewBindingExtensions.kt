@@ -8,7 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
-import timber.log.Timber
+import eu.darken.androidstarter.common.debug.logging.Logging.Priority.*
+import eu.darken.androidstarter.common.debug.logging.log
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -44,7 +45,7 @@ class ViewBindingProperty<ComponentT : LifecycleOwner, BindingT : ViewBinding>(
             localRef = null
 
             uiHandler.post {
-                Timber.v("Resetting viewBinding")
+                log(VERBOSE) { "Resetting viewBinding" }
                 viewBinding = null
             }
         }
@@ -53,7 +54,7 @@ class ViewBindingProperty<ComponentT : LifecycleOwner, BindingT : ViewBinding>(
     @MainThread
     override fun getValue(thisRef: ComponentT, property: KProperty<*>): BindingT {
         if (localRef == null && viewBinding != null) {
-            Timber.w("Fragment.onDestroyView() was called, but the handler didn't execute our delayed reset.")
+            log(WARN) { "Fragment.onDestroyView() was called, but the handler didn't execute our delayed reset." }
             /**
              * There is a fragment racecondition if you navigate to another fragment and quickly popBackStack().
              * Our uiHandler.post { } will not have executed for some reason.
@@ -70,7 +71,7 @@ class ViewBindingProperty<ComponentT : LifecycleOwner, BindingT : ViewBinding>(
          */
         (localRef as? Fragment)?.view?.let {
             if (it != viewBinding?.root && localRef === thisRef) {
-                Timber.w("Different view for the same fragment, resetting old viewBinding.")
+                log(WARN) { "Different view for the same fragment, resetting old viewBinding." }
                 viewBinding = null
             }
         }

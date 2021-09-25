@@ -3,7 +3,7 @@ package eu.darken.androidstarter.common
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.androidstarter.App
-import timber.log.Timber
+import eu.darken.androidstarter.common.debug.logging.log
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -25,7 +25,7 @@ class InstallId @Inject constructor(
         }
 
         return@lazy existing ?: UUID.randomUUID().toString().also {
-            Timber.tag(TAG).i("New install ID created: %s", it)
+            log(TAG) { "New install ID created: $it" }
             installIDFile.writeText(it)
         }
     }

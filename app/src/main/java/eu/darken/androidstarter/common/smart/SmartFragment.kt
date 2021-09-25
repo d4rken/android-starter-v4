@@ -7,7 +7,7 @@ import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import eu.darken.androidstarter.App
-import timber.log.Timber
+import eu.darken.androidstarter.common.debug.logging.log
 
 
 abstract class SmartFragment(
@@ -22,54 +22,54 @@ abstract class SmartFragment(
     }
 
     override fun onAttach(context: Context) {
-        Timber.tag(tag).v("onAttach(context=$context)")
+        log(tag) { "onAttach(context=$context)" }
         super.onAttach(context)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.tag(tag).v("onCreate(savedInstanceState=$savedInstanceState)")
+        log(tag) { "onCreate(savedInstanceState=$savedInstanceState)" }
         super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Timber.tag(tag).v("onViewCreated(view=$view, savedInstanceState=$savedInstanceState)")
+        log(tag) { "onViewCreated(view=$view, savedInstanceState=$savedInstanceState)" }
         super.onViewCreated(view, savedInstanceState)
     }
 
     @Suppress("DEPRECATION")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        Timber.tag(tag).v("onActivityCreated(savedInstanceState=$savedInstanceState)")
+        log(tag) { "onActivityCreated(savedInstanceState=$savedInstanceState)" }
         super.onActivityCreated(savedInstanceState)
     }
 
     override fun onResume() {
-        Timber.tag(tag).v("onResume()")
+        log(tag) { "onResume()" }
         super.onResume()
     }
 
     override fun onPause() {
-        Timber.tag(tag).v("onPause()")
+        log(tag) { "onPause()" }
         super.onPause()
     }
 
     override fun onDestroyView() {
-        Timber.tag(tag).v("onDestroyView()")
+        log(tag) { "onDestroyView()" }
         super.onDestroyView()
     }
 
     override fun onDetach() {
-        Timber.tag(tag).v("onDetach()")
+        log(tag) { "onDetach()" }
         super.onDetach()
     }
 
     override fun onDestroy() {
-        Timber.tag(tag).v("onDestroy()")
+        log(tag) { "onDestroy()" }
         super.onDestroy()
     }
 
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Timber.tag(tag).v("onActivityResult(requestCode=%d, resultCode=%d, data=%s)", requestCode, resultCode, data)
+        log(tag) { "onActivityResult(requestCode=$requestCode, resultCode=$resultCode, data=$data)" }
         super.onActivityResult(requestCode, resultCode, data)
     }
 }

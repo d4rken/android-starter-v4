@@ -5,50 +5,49 @@ import android.content.Intent
 import android.content.res.Configuration
 
 import eu.darken.androidstarter.App
-import timber.log.Timber
-
+import eu.darken.androidstarter.common.debug.logging.log
 
 abstract class SmartService : Service() {
     private val tag: String =
         App.logTag("Service", this.javaClass.simpleName + "(" + Integer.toHexString(this.hashCode()) + ")")
 
     override fun onCreate() {
-        Timber.tag(tag).d("onCreate()")
+        log(tag) { "onCreate()" }
         super.onCreate()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Timber.tag(tag).d("onStartCommand(intent=%s, flags=%s startId=%d)", intent, flags, startId)
+        log(tag) { "onStartCommand(intent=$intent, flags=$flags startId=$startId)" }
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
-        Timber.tag(tag).d("onDestroy()")
+        log(tag) { "onDestroy()" }
         super.onDestroy()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        Timber.tag(tag).d("onConfigurationChanged(newConfig=%s)", newConfig)
+        log(tag) { "onConfigurationChanged(newConfig=$newConfig)" }
         super.onConfigurationChanged(newConfig)
     }
 
     override fun onLowMemory() {
-        Timber.tag(tag).d("onLowMemory()")
+        log(tag) { "onLowMemory()" }
         super.onLowMemory()
     }
 
     override fun onUnbind(intent: Intent): Boolean {
-        Timber.tag(tag).d("onUnbind(intent=%s)", intent)
+        log(tag) { "onUnbind(intent=$intent)" }
         return super.onUnbind(intent)
     }
 
     override fun onRebind(intent: Intent) {
-        Timber.tag(tag).d("onRebind(intent=%s)", intent)
+        log(tag) { "onRebind(intent=$intent)" }
         super.onRebind(intent)
     }
 
     override fun onTaskRemoved(rootIntent: Intent) {
-        Timber.tag(tag).d("onTaskRemoved(rootIntent=%s)", rootIntent)
+        log(tag) { "onTaskRemoved(rootIntent=$rootIntent)" }
         super.onTaskRemoved(rootIntent)
     }
 }

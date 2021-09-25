@@ -1,6 +1,7 @@
 package eu.darken.androidstarter.main.core
 
 import eu.darken.androidstarter.common.coroutine.AppScope
+import eu.darken.androidstarter.common.debug.logging.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -9,7 +10,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.isActive
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,7 +22,7 @@ class SomeRepo @Inject constructor(
         var sub = 0L
         while (currentCoroutineContext().isActive) {
             val toEmit = sub++
-            Timber.v("Emitting (sub) $toEmit")
+            log { "Emitting (sub) $toEmit" }
             emit(toEmit)
             delay(1_000)
         }
@@ -32,7 +32,7 @@ class SomeRepo @Inject constructor(
         var counter = 0L
         while (currentCoroutineContext().isActive) {
             val toEmit = counter++
-            Timber.v("Emitting (perm) $toEmit")
+            log { "Emitting (perm) $toEmit" }
             emit(toEmit)
             delay(1_000)
         }
@@ -44,7 +44,7 @@ class SomeRepo @Inject constructor(
 
     val emojis: Flow<String> = flow {
         val emoji = EMOJIS[(Math.random() * EMOJIS.size).toInt()]
-        Timber.v("Emitting $emoji")
+        log { "Emitting $emoji" }
         emit(emoji)
     }
 

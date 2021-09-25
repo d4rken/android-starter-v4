@@ -2,9 +2,10 @@ package eu.darken.androidstarter.common.preferences
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import eu.darken.androidstarter.common.debug.logging.Logging.Priority.*
+import eu.darken.androidstarter.common.debug.logging.log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import timber.log.Timber
 
 class FlowPreference<T> constructor(
     private val preferences: SharedPreferences,
@@ -23,7 +24,7 @@ class FlowPreference<T> constructor(
             val newValue = reader(changedPrefs, changedKey)
             val currentvalue = flowInternal.value
             if (currentvalue != newValue && flowInternal.compareAndSet(currentvalue, newValue)) {
-                Timber.v("%s:%s changed to %s", changedPrefs, changedKey, newValue)
+                log(VERBOSE) { "$changedPrefs:$changedKey changed to $newValue" }
             }
         }
 

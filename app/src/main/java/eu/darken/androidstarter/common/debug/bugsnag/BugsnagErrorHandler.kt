@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.debugging
+package eu.darken.androidstarter.common.debug.bugsnag
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,18 +7,20 @@ import com.bugsnag.android.Event
 import com.bugsnag.android.OnErrorCallback
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.androidstarter.BuildConfig
-import timber.log.Timber
+import eu.darken.androidstarter.common.debug.logging.Logging.Priority.WARN
+import eu.darken.androidstarter.common.debug.logging.asLog
+import eu.darken.androidstarter.common.debug.logging.log
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class BugsnagErrorHandler @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val bugsnagTree: BugsnagTree,
+    private val bugsnagLogger: BugsnagLogger,
 ) : OnErrorCallback {
 
     override fun onError(event: Event): Boolean {
-        bugsnagTree.injectLog(event)
+        bugsnagLogger.injectLog(event)
 
         TAB_APP.also { tab ->
             event.addMetadata(tab, "gitSha", BuildConfig.GITSHA)
@@ -46,7 +48,7 @@ class BugsnagErrorHandler @Inject constructor(
                 sb.toString()
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            log(WARN) { e.asLog() }
             null
         }
     }
