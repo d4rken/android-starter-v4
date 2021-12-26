@@ -2,8 +2,8 @@ package eu.darken.androidstarter.common
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import eu.darken.androidstarter.App
 import eu.darken.androidstarter.common.debug.logging.log
+import eu.darken.androidstarter.common.debug.logging.logTag
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -31,7 +31,7 @@ class InstallId @Inject constructor(
     }
 
     companion object {
-        private val TAG: String = App.logTag("InstallID")
+        private val TAG: String = logTag("InstallID")
         private val UUID_PATTERN = Pattern.compile(
             "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
         )

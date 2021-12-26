@@ -6,16 +6,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.viewbinding.ViewBinding
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import eu.darken.androidstarter.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.androidstarter.common.debug.logging.log
 import eu.darken.androidstarter.common.debug.logging.logTag
+import eu.darken.androidstarter.common.error.asErrorDialogBuilder
+import eu.darken.androidstarter.common.navigation.doNavigate
+import eu.darken.androidstarter.common.navigation.popBackStack
+import eu.darken.androidstarter.common.observe2
 
 
-abstract class SmartFragment(@LayoutRes val layoutRes: Int?) : Fragment(layoutRes ?: 0) {
+abstract class Smart2BottomSheetDialogFragment : BottomSheetDialogFragment() {
 
-    constructor() : this(null)
+    abstract val ui: ViewBinding
+    abstract val vdc: Smart2VM
 
     internal val tag: String =
         logTag("Fragment", "${this.javaClass.simpleName}(${Integer.toHexString(hashCode())})")
@@ -34,12 +40,15 @@ abstract class SmartFragment(@LayoutRes val layoutRes: Int?) : Fragment(layoutRe
         log(tag, VERBOSE) {
             "onCreateView(inflater=$inflater, container=$container, savedInstanceState=$savedInstanceState"
         }
-        return layoutRes?.let { inflater.inflate(it, container, false) }
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         log(tag, VERBOSE) { "onViewCreated(view=$view, savedInstanceState=$savedInstanceState)" }
         super.onViewCreated(view, savedInstanceState)
+
+        vdc.navEvents.observe2(this, ui) { dir -> dir?.let { doNavigate(it) } ?: popBackStack() }
+        vdc.errorEvents.observe2(this, ui) { it.asErrorDialogBuilder(requireContext()).show() }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -77,4 +86,10 @@ abstract class SmartFragment(@LayoutRes val layoutRes: Int?) : Fragment(layoutRe
         super.onActivityResult(requestCode, resultCode, data)
     }
 
+    inline fun <T, reified VB : ViewBinding?> LiveData<T>.observe2(
+        ui: VB,
+        crossinline callback: VB.(T) -> Unit
+    ) {
+        observe(viewLifecycleOwner) { callback.invoke(ui, it) }
+    }
 }

@@ -86,7 +86,7 @@ inline fun Any.log(
 ) {
     if (Logging.hasReceivers) {
         Logging.logInternal(
-            tag = logTagViaCallSite(),
+            tag = "BB:${logTagViaCallSite()}",
             priority = priority,
             metaData = metaData,
             message = message(),

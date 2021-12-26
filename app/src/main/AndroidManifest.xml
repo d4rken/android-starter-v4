@@ -13,6 +13,7 @@
         <activity
             android:name="eu.darken.androidstarter.main.ui.MainActivity"
             android:label="@string/app_name"
+            android:exported="true"
             android:theme="@style/Theme.LauncherToMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,12 +24,15 @@
         <receiver
             android:name="eu.darken.androidstarter.main.core.receiver.ExampleReceiver"
             android:enabled="true"
+            android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.HEADSET_PLUG" />
             </intent-filter>
         </receiver>
-        <service android:name="eu.darken.androidstarter.main.core.service.ExampleService" />
+        <service
+            android:name="eu.darken.androidstarter.main.core.service.ExampleService"
+            android:exported="false" />
     </application>
 
 </manifest>

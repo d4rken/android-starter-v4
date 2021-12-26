@@ -14,26 +14,20 @@ import kotlinx.coroutines.sync.withLock
 import kotlin.coroutines.CoroutineContext
 
 /**
- * A thread safe flow that can be updated blocking and async, with way to provide an initial (lazy) value.
+ * A thread safe stateful flow that can be updated blocking and async with a lazy initial value provider.
  *
  * @param loggingTag will be prepended to logging tag, i.e. "$loggingTag:HD"
- * @param scope on which the update operations and callbacks will be executed on
+ * @param parentScope on which the update operations and callbacks will be executed on
  * @param coroutineContext used in combination with [CoroutineScope]
- * @param sharingBehavior see [Flow.shareIn]
  * @param startValueProvider provides the first value, errors will be rethrown on [CoroutineScope]
  */
-class HotDataFlow<T : Any>(
+class DynamicStateFlow<T>(
     loggingTag: String? = null,
-    scope: CoroutineScope,
-    coroutineContext: CoroutineContext = scope.coroutineContext,
-    sharingBehavior: SharingStarted = SharingStarted.WhileSubscribed(),
+    parentScope: CoroutineScope,
+    coroutineContext: CoroutineContext = parentScope.coroutineContext,
     private val startValueProvider: suspend CoroutineScope.() -> T
 ) {
-    private val tag = loggingTag?.let { "$it:HDF" }
-
-    init {
-        if (tag != null) log(tag, VERBOSE) { "init()" }
-    }
+    private val lTag = loggingTag?.let { "$it:DSFlow" }
 
     private val updateActions = MutableSharedFlow<Update<T>>(
         replay = Int.MAX_VALUE,
@@ -42,71 +36,68 @@ class HotDataFlow<T : Any>(
     )
     private val valueGuard = Mutex()
 
-    private val internalProducer: Flow<State<T>> = channelFlow {
+    private val producer: Flow<State<T>> = channelFlow {
         var currentValue = valueGuard.withLock {
-            if (tag != null) log(tag, VERBOSE) { "Providing startValue..." }
-            startValueProvider().also {
-                if (tag != null) log(tag, VERBOSE) { "...startValue provided, emitting $it" }
-                val initializer = Update<T>(onError = null, onModify = { it })
+            lTag?.let { log(it, VERBOSE) { "Providing startValue..." } }
 
-                send(State(value = it, updatedBy = initializer))
+            startValueProvider().also { startValue ->
+                val initializer = Update<T>(onError = null, onModify = { startValue })
+                send(State(value = startValue, updatedBy = initializer))
+                lTag?.let { log(it, VERBOSE) { "...startValue provided and emitted." } }
             }
         }
 
-        if (tag != null) log(tag, VERBOSE) { "...startValue provided and emitted." }
-
-        updateActions
-            .onCompletion {
-                if (tag != null) log(tag, VERBOSE) { "updateActions onCompletion -> resetReplayCache()" }
-                updateActions.resetReplayCache()
-            }
-            .collect { update ->
-                currentValue = valueGuard.withLock {
-                    try {
-                        update.onModify(currentValue).also {
-                            send(State(value = it, updatedBy = update))
-                        }
-                    } catch (e: Exception) {
-                        if (tag != null) log(tag, VERBOSE) {
-                            "Data modifying failed (onError=${update.onError}): ${e.asLog()}"
-                        }
-
-                        if (update.onError != null) {
-                            update.onError.invoke(e)
-                        } else {
-                            send(State(value = currentValue, error = e, updatedBy = update))
-                        }
-                        currentValue
+        updateActions.collect { update ->
+            currentValue = valueGuard.withLock {
+                try {
+                    update.onModify(currentValue).also {
+                        send(State(value = it, updatedBy = update))
                     }
+                } catch (e: Exception) {
+                    lTag?.let {
+                        log(it, VERBOSE) { "Data modifying failed (onError=${update.onError}): ${e.asLog()}" }
+                    }
+
+                    if (update.onError != null) {
+                        update.onError.invoke(e)
+                    } else {
+                        send(State(value = currentValue, error = e, updatedBy = update))
+                    }
+
+                    currentValue
                 }
             }
+        }
 
-        if (tag != null) log(tag, VERBOSE) { "internal channelFlow finished." }
+        lTag?.let { log(it, VERBOSE) { "internal channelFlow finished." } }
     }
 
-    private val internalFlow = internalProducer
-        .onStart { if (tag != null) log(tag, VERBOSE) { "Internal onStart" } }
+    private val internalFlow = producer
+        .onStart { lTag?.let { log(it, VERBOSE) { "Internal onStart" } } }
         .onCompletion { err ->
             when {
-                err is CancellationException -> if (tag != null) log(
-                    tag,
-                    VERBOSE
-                ) { "internal onCompletion() due to cancellation" }
-                err != null -> if (tag != null) log(tag, VERBOSE) {
-                    "internal onCompletion() due to error: ${err.asLog()}"
+                err is CancellationException -> {
+                    lTag?.let { log(it, VERBOSE) { "internal onCompletion() due to cancellation" } }
                 }
-                else -> if (tag != null) log(tag, VERBOSE) { "internal onCompletion()" }
+                err != null -> {
+                    lTag?.let { log(it, VERBOSE) { "internal onCompletion() due to error: ${err.asLog()}" } }
+                }
+                else -> {
+                    lTag?.let { log(it, VERBOSE) { "internal onCompletion()" } }
+                }
             }
         }
         .shareIn(
-            scope = scope + coroutineContext,
+            scope = parentScope + coroutineContext,
             replay = 1,
-            started = sharingBehavior
+            started = SharingStarted.Lazily
         )
 
-    val data: Flow<T> = internalFlow
+    val flow: Flow<T> = internalFlow
         .map { it.value }
         .distinctUntilChanged()
+
+    suspend fun value() = flow.first()
 
     /**
      * Non blocking update method.
@@ -136,8 +127,9 @@ class HotDataFlow<T : Any>(
         val update: Update<T> = Update(onModify = action)
         updateActions.emit(update)
 
-        if (tag != null) log(tag, VERBOSE) { "Waiting for update." }
+        lTag?.let { log(it, VERBOSE) { "Waiting for update." } }
         val ourUpdate = internalFlow.first { it.updatedBy == update }
+        lTag?.let { log(it, VERBOSE) { "Finished waiting, got $ourUpdate" } }
 
         ourUpdate.error?.let { throw it }
 

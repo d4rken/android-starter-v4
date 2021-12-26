@@ -4,10 +4,7 @@ import android.app.Application
 import com.getkeepsafe.relinker.ReLinker
 import dagger.hilt.android.HiltAndroidApp
 import eu.darken.androidstarter.bugreporting.BugReporter
-import eu.darken.androidstarter.common.debug.logging.LogCatLogger
-import eu.darken.androidstarter.common.debug.logging.Logging
-import eu.darken.androidstarter.common.debug.logging.asLog
-import eu.darken.androidstarter.common.debug.logging.log
+import eu.darken.androidstarter.common.debug.logging.*
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -30,14 +27,5 @@ open class App : Application() {
 
     companion object {
         internal val TAG = logTag("AKSv4")
-
-        fun logTag(vararg tags: String): String {
-            val sb = StringBuilder()
-            for (i in tags.indices) {
-                sb.append(tags[i])
-                if (i < tags.size - 1) sb.append(":")
-            }
-            return sb.toString()
-        }
     }
 }

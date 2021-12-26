@@ -1,9 +1,14 @@
 package eu.darken.androidstarter.common.flow
 
+import eu.darken.androidstarter.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.androidstarter.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.androidstarter.common.debug.logging.asLog
 import eu.darken.androidstarter.common.debug.logging.log
+import eu.darken.androidstarter.common.error.hasCause
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
+import kotlin.time.Duration
 
 /**
  * Create a stateful flow, with the initial value of null, but never emits a null value.
@@ -15,15 +20,9 @@ fun <T : Any> Flow<T>.shareLatest(
     scope: CoroutineScope,
     started: SharingStarted = SharingStarted.WhileSubscribed(replayExpirationMillis = 0)
 ) = this
-    .onStart {
-        if (tag != null) log(tag) { "shareLatest(...) start" }
-    }
-    .onEach {
-        if (tag != null) log(tag) { "shareLatest(...) emission: $it" }
-    }
-    .onCompletion {
-        if (tag != null) log(tag) { "shareLatest(...) completed." }
-    }
+    .onStart { if (tag != null) log(tag) { "shareLatest(...) start" } }
+    .onEach { if (tag != null) log(tag) { "shareLatest(...) emission: $it" } }
+    .onCompletion { if (tag != null) log(tag) { "shareLatest(...) completed." } }
     .catch {
         if (tag != null) log(tag) { "shareLatest(...) catch(): ${it.asLog()}" }
         throw it
@@ -35,211 +34,41 @@ fun <T : Any> Flow<T>.shareLatest(
     )
     .filterNotNull()
 
-@Suppress("UNCHECKED_CAST", "LongParameterList")
-inline fun <T1, T2, R> combine(
-    flow: Flow<T1>,
-    flow2: Flow<T2>,
-    crossinline transform: suspend (T1, T2) -> R
-): Flow<R> = combine(
-    flow,
-    flow2
-) { args: Array<*> ->
-    transform(
-        args[0] as T1,
-        args[1] as T2
-    )
+fun <T : Any> Flow<T>.replayingShare(scope: CoroutineScope) = this.shareIn(
+    scope = scope,
+    replay = 1,
+    started = SharingStarted.WhileSubscribed(replayExpiration = Duration.ZERO)
+)
+
+internal fun <T> Flow<T>.withPrevious(): Flow<Pair<T?, T>> = this
+    .scan(Pair<T?, T?>(null, null)) { previous, current -> Pair(previous.second, current) }
+    .drop(1)
+    .map {
+        @Suppress("UNCHECKED_CAST")
+        it as Pair<T?, T>
+    }
+
+
+fun <T> Flow<T>.onError(block: suspend (Throwable) -> Unit) = this.catch {
+    block(it)
+    throw it
 }
 
-@Suppress("UNCHECKED_CAST", "LongParameterList")
-inline fun <T1, T2, T3, R> combine(
-    flow: Flow<T1>,
-    flow2: Flow<T2>,
-    flow3: Flow<T3>,
-    crossinline transform: suspend (T1, T2, T3) -> R
-): Flow<R> = combine(
-    flow,
-    flow2,
-    flow3,
-) { args: Array<*> ->
-    transform(
-        args[0] as T1,
-        args[1] as T2,
-        args[2] as T3,
-    )
+fun <T> Flow<T>.takeUntilAfter(predicate: suspend (T) -> Boolean) = transformWhile {
+    val fullfilled = predicate(it)
+    emit(it)
+    !fullfilled // We keep emitting until condition is fullfilled = true
 }
 
-@Suppress("UNCHECKED_CAST", "LongParameterList")
-inline fun <T1, T2, T3, T4, T5, R> combine(
-    flow: Flow<T1>,
-    flow2: Flow<T2>,
-    flow3: Flow<T3>,
-    flow4: Flow<T4>,
-    flow5: Flow<T5>,
-    crossinline transform: suspend (T1, T2, T3, T4, T5) -> R
-): Flow<R> = combine(
-    flow,
-    flow2,
-    flow3,
-    flow4,
-    flow5
-) { args: Array<*> ->
-    transform(
-        args[0] as T1,
-        args[1] as T2,
-        args[2] as T3,
-        args[3] as T4,
-        args[4] as T5
-    )
-}
-
-@Suppress("UNCHECKED_CAST", "LongParameterList")
-inline fun <T1, T2, T3, T4, T5, T6, R> combine(
-    flow: Flow<T1>,
-    flow2: Flow<T2>,
-    flow3: Flow<T3>,
-    flow4: Flow<T4>,
-    flow5: Flow<T5>,
-    flow6: Flow<T6>,
-    crossinline transform: suspend (T1, T2, T3, T4, T5, T6) -> R
-): Flow<R> = combine(
-    flow,
-    flow2,
-    flow3,
-    flow4,
-    flow5,
-    flow6
-) { args: Array<*> ->
-    transform(
-        args[0] as T1,
-        args[1] as T2,
-        args[2] as T3,
-        args[3] as T4,
-        args[4] as T5,
-        args[5] as T6
-    )
-}
-
-@Suppress("UNCHECKED_CAST", "LongParameterList")
-inline fun <T1, T2, T3, T4, T5, T6, T7, R> combine(
-    flow: Flow<T1>,
-    flow2: Flow<T2>,
-    flow3: Flow<T3>,
-    flow4: Flow<T4>,
-    flow5: Flow<T5>,
-    flow6: Flow<T6>,
-    flow7: Flow<T7>,
-    crossinline transform: suspend (T1, T2, T3, T4, T5, T6, T7) -> R
-): Flow<R> = combine(
-    flow,
-    flow2,
-    flow3,
-    flow4,
-    flow5,
-    flow6,
-    flow7
-) { args: Array<*> ->
-    transform(
-        args[0] as T1,
-        args[1] as T2,
-        args[2] as T3,
-        args[3] as T4,
-        args[4] as T5,
-        args[5] as T6,
-        args[6] as T7
-    )
-}
-
-@Suppress("UNCHECKED_CAST", "LongParameterList")
-inline fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combine(
-    flow: Flow<T1>,
-    flow2: Flow<T2>,
-    flow3: Flow<T3>,
-    flow4: Flow<T4>,
-    flow5: Flow<T5>,
-    flow6: Flow<T6>,
-    flow7: Flow<T7>,
-    flow8: Flow<T8>,
-    crossinline transform: suspend (T1, T2, T3, T4, T5, T6, T7, T8) -> R
-): Flow<R> = combine(
-    flow,
-    flow2,
-    flow3,
-    flow4,
-    flow5,
-    flow6,
-    flow7,
-    flow8
-) { args: Array<*> ->
-    transform(
-        args[0] as T1,
-        args[1] as T2,
-        args[2] as T3,
-        args[3] as T4,
-        args[4] as T5,
-        args[5] as T6,
-        args[6] as T7,
-        args[7] as T8
-    )
-}
-
-@Suppress("UNCHECKED_CAST", "LongParameterList")
-inline fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R> combine(
-    flow: Flow<T1>,
-    flow2: Flow<T2>,
-    flow3: Flow<T3>,
-    flow4: Flow<T4>,
-    flow5: Flow<T5>,
-    flow6: Flow<T6>,
-    flow7: Flow<T7>,
-    flow8: Flow<T8>,
-    flow9: Flow<T9>,
-    flow10: Flow<T10>,
-    crossinline transform: suspend (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10) -> R
-): Flow<R> = combine(
-    flow, flow2, flow3, flow4, flow5, flow6, flow7, flow8, flow9, flow10
-) { args: Array<*> ->
-    transform(
-        args[0] as T1,
-        args[1] as T2,
-        args[2] as T3,
-        args[3] as T4,
-        args[4] as T5,
-        args[5] as T6,
-        args[6] as T7,
-        args[7] as T8,
-        args[8] as T9,
-        args[9] as T10
-    )
-}
-
-@Suppress("UNCHECKED_CAST", "LongParameterList")
-inline fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R> combine(
-    flow: Flow<T1>,
-    flow2: Flow<T2>,
-    flow3: Flow<T3>,
-    flow4: Flow<T4>,
-    flow5: Flow<T5>,
-    flow6: Flow<T6>,
-    flow7: Flow<T7>,
-    flow8: Flow<T8>,
-    flow9: Flow<T9>,
-    flow10: Flow<T10>,
-    flow11: Flow<T11>,
-    crossinline transform: suspend (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11) -> R
-): Flow<R> = combine(
-    flow, flow2, flow3, flow4, flow5, flow6, flow7, flow8, flow9, flow10, flow11
-) { args: Array<*> ->
-    transform(
-        args[0] as T1,
-        args[1] as T2,
-        args[2] as T3,
-        args[3] as T4,
-        args[4] as T5,
-        args[5] as T6,
-        args[6] as T7,
-        args[7] as T8,
-        args[8] as T9,
-        args[9] as T10,
-        args[10] as T11
-    )
-}
+fun <T> Flow<T>.setupCommonEventHandlers(tag: String, identifier: () -> String) = this
+    .onStart { log(tag, VERBOSE) { "${identifier()}.onStart()" } }
+    .onEach { log(tag, VERBOSE) { "${identifier()}.onEach(): $it" } }
+    .onCompletion { log(tag, VERBOSE) { "${identifier()}.onCompletion()" } }
+    .catch {
+        if (it.hasCause(CancellationException::class)) {
+            log(tag, VERBOSE) { "${identifier()} cancelled" }
+        } else {
+            log(tag, ERROR) { "${identifier()} failed: ${it.asLog()}" }
+            throw it
+        }
+    }

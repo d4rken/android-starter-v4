@@ -4,13 +4,13 @@ import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import dagger.hilt.android.qualifiers.ApplicationContext
-import eu.darken.androidstarter.App
 import eu.darken.androidstarter.common.InstallId
 import eu.darken.androidstarter.common.debug.bugsnag.BugsnagErrorHandler
 import eu.darken.androidstarter.common.debug.bugsnag.BugsnagLogger
 import eu.darken.androidstarter.common.debug.bugsnag.NOPBugsnagErrorHandler
 import eu.darken.androidstarter.common.debug.logging.Logging
 import eu.darken.androidstarter.common.debug.logging.log
+import eu.darken.androidstarter.common.debug.logging.logTag
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -51,6 +51,6 @@ class BugReporter @Inject constructor(
     }
 
     companion object {
-        private val TAG = App.logTag("BugReporter")
+        private val TAG = logTag("BugReporter")
     }
 }

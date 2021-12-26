@@ -6,4 +6,5 @@
     <string name="label_another_fragment">Another Fragment</string>
     <string name="action_show_another_fragment">Show another fragment</string>
     <string name="msg_what_up_this_is_another_fragment">What up! This is another fragment!</string>
+    <string name="general_error_label">Error</string>
 </resources>

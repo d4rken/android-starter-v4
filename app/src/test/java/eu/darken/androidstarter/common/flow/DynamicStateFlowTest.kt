@@ -9,7 +9,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -21,22 +20,22 @@ import java.io.IOException
 import java.lang.Thread.sleep
 import kotlin.concurrent.thread
 
-class HotDataFlowTest : BaseTest() {
+class DynamicStateFlowTest : BaseTest() {
 
     // Without an init value, there isn't a way to keep using the flow
     @Test
     fun `exceptions on initialization are rethrown`() {
         val testScope = TestCoroutineScope()
-        val hotData = HotDataFlow<String>(
+        val hotData = DynamicStateFlow<String>(
             loggingTag = "tag",
-            scope = testScope,
+            parentScope = testScope,
             coroutineContext = Dispatchers.Unconfined,
             startValueProvider = { throw IOException() }
         )
         runBlocking {
             withTimeoutOrNull(500) {
                 // This blocking scope gets the init exception as the first caller
-                hotData.data.firstOrNull()
+                hotData.flow.firstOrNull()
             } shouldBe null
         }
 
@@ -46,46 +45,22 @@ class HotDataFlowTest : BaseTest() {
     }
 
     @Test
-    fun `subscription ends when no subscriber is collecting, mode WhileSubscribed`() {
-        val testScope = TestCoroutineScope()
-        val valueProvider = mockk<suspend CoroutineScope.() -> String>()
-        coEvery { valueProvider.invoke(any()) } returns "Test"
-
-        val hotData = HotDataFlow(
-            loggingTag = "tag",
-            scope = testScope,
-            coroutineContext = Dispatchers.Unconfined,
-            startValueProvider = valueProvider,
-            sharingBehavior = SharingStarted.WhileSubscribed()
-        )
-
-        testScope.apply {
-            runBlockingTest2(ignoreActive = true) {
-                hotData.data.first() shouldBe "Test"
-                hotData.data.first() shouldBe "Test"
-            }
-            coVerify(exactly = 2) { valueProvider.invoke(any()) }
-        }
-    }
-
-    @Test
     fun `subscription doesn't end when no subscriber is collecting, mode Lazily`() {
         val testScope = TestCoroutineScope()
         val valueProvider = mockk<suspend CoroutineScope.() -> String>()
         coEvery { valueProvider.invoke(any()) } returns "Test"
 
-        val hotData = HotDataFlow(
+        val hotData = DynamicStateFlow(
             loggingTag = "tag",
-            scope = testScope,
+            parentScope = testScope,
             coroutineContext = Dispatchers.Unconfined,
             startValueProvider = valueProvider,
-            sharingBehavior = SharingStarted.Lazily
         )
 
         testScope.apply {
-            runBlockingTest2(ignoreActive = true) {
-                hotData.data.first() shouldBe "Test"
-                hotData.data.first() shouldBe "Test"
+            runBlockingTest2(allowUncompleted = true) {
+                hotData.flow.first() shouldBe "Test"
+                hotData.flow.first() shouldBe "Test"
             }
             coVerify(exactly = 1) { valueProvider.invoke(any()) }
         }
@@ -97,14 +72,13 @@ class HotDataFlowTest : BaseTest() {
         val valueProvider = mockk<suspend CoroutineScope.() -> Long>()
         coEvery { valueProvider.invoke(any()) } returns 1
 
-        val hotData = HotDataFlow(
+        val hotData = DynamicStateFlow(
             loggingTag = "tag",
-            scope = testScope,
+            parentScope = testScope,
             startValueProvider = valueProvider,
-            sharingBehavior = SharingStarted.Lazily
         )
 
-        val testCollector = hotData.data.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(startOnScope = testScope)
         testCollector.silent = true
 
         (1..16).forEach { _ ->
@@ -137,14 +111,13 @@ class HotDataFlowTest : BaseTest() {
         val valueProvider = mockk<suspend CoroutineScope.() -> Map<String, TestData>>()
         coEvery { valueProvider.invoke(any()) } returns mapOf("data" to TestData())
 
-        val hotData = HotDataFlow(
+        val hotData = DynamicStateFlow(
             loggingTag = "tag",
-            scope = testScope,
+            parentScope = testScope,
             startValueProvider = valueProvider,
-            sharingBehavior = SharingStarted.Lazily
         )
 
-        val testCollector = hotData.data.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(startOnScope = testScope)
         testCollector.silent = true
 
         (1..10).forEach { _ ->
@@ -173,14 +146,13 @@ class HotDataFlowTest : BaseTest() {
     fun `only emit new values if they actually changed updates`() {
         val testScope = TestCoroutineScope()
 
-        val hotData = HotDataFlow(
+        val hotData = DynamicStateFlow(
             loggingTag = "tag",
-            scope = testScope,
+            parentScope = testScope,
             startValueProvider = { "1" },
-            sharingBehavior = SharingStarted.Lazily
         )
 
-        val testCollector = hotData.data.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(startOnScope = testScope)
         testCollector.silent = true
 
         hotData.updateAsync { "1" }
@@ -200,17 +172,16 @@ class HotDataFlowTest : BaseTest() {
         val valueProvider = mockk<suspend CoroutineScope.() -> String>()
         coEvery { valueProvider.invoke(any()) } returns "Test"
 
-        val hotData = HotDataFlow(
+        val hotData = DynamicStateFlow(
             loggingTag = "tag",
-            scope = testScope,
+            parentScope = testScope,
             startValueProvider = valueProvider,
-            sharingBehavior = SharingStarted.Lazily
         )
 
-        testScope.runBlockingTest2(ignoreActive = true) {
-            val sub1 = hotData.data.test(tag = "sub1", startOnScope = this)
-            val sub2 = hotData.data.test(tag = "sub2", startOnScope = this)
-            val sub3 = hotData.data.test(tag = "sub3", startOnScope = this)
+        testScope.runBlockingTest2(allowUncompleted = true) {
+            val sub1 = hotData.flow.test(tag = "sub1", startOnScope = this)
+            val sub2 = hotData.flow.test(tag = "sub2", startOnScope = this)
+            val sub3 = hotData.flow.test(tag = "sub3", startOnScope = this)
 
             hotData.updateAsync { "A" }
             hotData.updateAsync { "B" }
@@ -222,25 +193,24 @@ class HotDataFlowTest : BaseTest() {
                 it.cancel()
             }
 
-            hotData.data.first() shouldBe "C"
+            hotData.flow.first() shouldBe "C"
         }
         coVerify(exactly = 1) { valueProvider.invoke(any()) }
     }
 
     @Test
-    fun `update queue is wiped on completion`() = runBlockingTest2(ignoreActive = true) {
+    fun `value is persisted between unsubscribes`() = runBlockingTest2(allowUncompleted = true) {
         val valueProvider = mockk<suspend CoroutineScope.() -> Long>()
         coEvery { valueProvider.invoke(any()) } returns 1
 
-        val hotData = HotDataFlow(
+        val hotData = DynamicStateFlow(
             loggingTag = "tag",
-            scope = this,
+            parentScope = this,
             coroutineContext = this.coroutineContext,
             startValueProvider = valueProvider,
-            sharingBehavior = SharingStarted.WhileSubscribed(replayExpirationMillis = 0)
         )
 
-        val testCollector1 = hotData.data.test(tag = "collector1", startOnScope = this)
+        val testCollector1 = hotData.flow.test(tag = "collector1", startOnScope = this)
         testCollector1.silent = false
 
         (1..10).forEach { _ ->
@@ -257,7 +227,7 @@ class HotDataFlowTest : BaseTest() {
         testCollector1.cancel()
         testCollector1.awaitFinal()
 
-        val testCollector2 = hotData.data.test(tag = "collector2", startOnScope = this)
+        val testCollector2 = hotData.flow.test(tag = "collector2", startOnScope = this)
         testCollector2.silent = false
 
         advanceUntilIdle()
@@ -265,23 +235,22 @@ class HotDataFlowTest : BaseTest() {
         testCollector2.cancel()
         testCollector2.awaitFinal()
 
-        testCollector2.latestValues shouldBe listOf(1L)
+        testCollector2.latestValues shouldBe listOf(11L)
 
-        coVerify(exactly = 2) { valueProvider.invoke(any()) }
+        coVerify(exactly = 1) { valueProvider.invoke(any()) }
     }
 
     @Test
     fun `blocking update is actually blocking`() = runBlocking {
         val testScope = TestCoroutineScope()
-        val hotData = HotDataFlow(
+        val hotData = DynamicStateFlow(
             loggingTag = "tag",
-            scope = testScope,
+            parentScope = testScope,
             coroutineContext = testScope.coroutineContext,
             startValueProvider = {
                 delay(2000)
                 2
             },
-            sharingBehavior = SharingStarted.Lazily
         )
 
         hotData.updateAsync {
@@ -289,7 +258,7 @@ class HotDataFlowTest : BaseTest() {
             this + 1
         }
 
-        val testCollector = hotData.data.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(startOnScope = testScope)
 
         testScope.advanceUntilIdle()
 
@@ -304,28 +273,27 @@ class HotDataFlowTest : BaseTest() {
     @Test
     fun `blocking update rethrows error`() = runBlocking {
         val testScope = TestCoroutineScope()
-        val hotData = HotDataFlow(
+        val hotData = DynamicStateFlow(
             loggingTag = "tag",
-            scope = testScope,
+            parentScope = testScope,
             coroutineContext = testScope.coroutineContext,
             startValueProvider = {
                 delay(2000)
                 2
             },
-            sharingBehavior = SharingStarted.Lazily
         )
 
-        val testCollector = hotData.data.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(startOnScope = testScope)
 
         testScope.advanceUntilIdle()
 
         shouldThrow<IOException> {
             hotData.updateBlocking { throw IOException("Surprise") } shouldBe 0
         }
-        hotData.data.first() shouldBe 2
+        hotData.flow.first() shouldBe 2
 
         hotData.updateBlocking { 3 } shouldBe 3
-        hotData.data.first() shouldBe 3
+        hotData.flow.first() shouldBe 3
 
         testScope.uncaughtExceptions.singleOrNull() shouldBe null
 
@@ -336,14 +304,13 @@ class HotDataFlowTest : BaseTest() {
     fun `async updates error handler`() {
         val testScope = TestCoroutineScope()
 
-        val hotData = HotDataFlow(
+        val hotData = DynamicStateFlow(
             loggingTag = "tag",
-            scope = testScope,
+            parentScope = testScope,
             startValueProvider = { 1 },
-            sharingBehavior = SharingStarted.Lazily
         )
 
-        val testCollector = hotData.data.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(startOnScope = testScope)
         testScope.advanceUntilIdle()
 
         hotData.updateAsync { throw IOException("Surprise") }
@@ -359,14 +326,13 @@ class HotDataFlowTest : BaseTest() {
     fun `async updates rethrow errors on HotDataFlow scope if no error handler is set`() = runBlocking {
         val testScope = TestCoroutineScope()
 
-        val hotData = HotDataFlow(
+        val hotData = DynamicStateFlow(
             loggingTag = "tag",
-            scope = testScope,
+            parentScope = testScope,
             startValueProvider = { 1 },
-            sharingBehavior = SharingStarted.Lazily
         )
 
-        val testCollector = hotData.data.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(startOnScope = testScope)
         testScope.advanceUntilIdle()
 
         var thrownError: Exception? = null

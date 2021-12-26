@@ -1,11 +1,11 @@
 package testhelper.coroutine
 
+import eu.darken.androidstarter.common.debug.logging.log
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.UncompletedCoroutinesError
 import kotlinx.coroutines.test.runBlockingTest
-import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -15,16 +15,16 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 @ExperimentalCoroutinesApi // Since 1.2.1, tentatively till 1.3.0
 fun TestCoroutineScope.runBlockingTest2(
-    ignoreActive: Boolean = false,
+    allowUncompleted: Boolean = false,
     block: suspend TestCoroutineScope.() -> Unit
 ): Unit = runBlockingTest2(
-    ignoreActive = ignoreActive,
+    allowUncompleted = allowUncompleted,
     context = coroutineContext,
     testBody = block
 )
 
 fun runBlockingTest2(
-    ignoreActive: Boolean = false,
+    allowUncompleted: Boolean = false,
     context: CoroutineContext = EmptyCoroutineContext,
     testBody: suspend TestCoroutineScope.() -> Unit
 ) {
@@ -36,13 +36,14 @@ fun runBlockingTest2(
                     testBody = testBody
                 )
             } catch (e: UncompletedCoroutinesError) {
-                if (!ignoreActive) throw e
-                else Timber.v("Ignoring active job.")
+                if (!allowUncompleted) throw e
+                else log { "Ignoring active job." }
             }
         }
     } catch (e: Exception) {
-        if (!ignoreActive || (e.message != "This job has not completed yet")) {
+        if (!allowUncompleted || (e.message != "This job has not completed yet")) {
             throw e
         }
     }
 }
+

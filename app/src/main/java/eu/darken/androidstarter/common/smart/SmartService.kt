@@ -3,13 +3,12 @@ package eu.darken.androidstarter.common.smart
 import android.app.Service
 import android.content.Intent
 import android.content.res.Configuration
-
-import eu.darken.androidstarter.App
 import eu.darken.androidstarter.common.debug.logging.log
+import eu.darken.androidstarter.common.debug.logging.logTag
 
 abstract class SmartService : Service() {
     private val tag: String =
-        App.logTag("Service", this.javaClass.simpleName + "(" + Integer.toHexString(this.hashCode()) + ")")
+        logTag("Service", this.javaClass.simpleName + "(" + Integer.toHexString(this.hashCode()) + ")")
 
     override fun onCreate() {
         log(tag) { "onCreate()" }
