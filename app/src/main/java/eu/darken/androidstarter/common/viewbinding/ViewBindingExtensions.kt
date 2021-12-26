@@ -13,8 +13,8 @@ import eu.darken.androidstarter.common.debug.logging.log
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-inline fun <FragmentT : Fragment, reified BindingT : ViewBinding> FragmentT.viewBindingLazy() =
-    this.viewBindingLazy(
+inline fun <FragmentT : Fragment, reified BindingT : ViewBinding> FragmentT.viewBinding() =
+    this.viewBinding(
         bindingProvider = {
             val bindingMethod = BindingT::class.java.getMethod("bind", View::class.java)
             bindingMethod(null, requireView()) as BindingT
@@ -23,7 +23,7 @@ inline fun <FragmentT : Fragment, reified BindingT : ViewBinding> FragmentT.view
     )
 
 @Suppress("unused")
-fun <FragmentT : Fragment, BindingT : ViewBinding> FragmentT.viewBindingLazy(
+fun <FragmentT : Fragment, BindingT : ViewBinding> FragmentT.viewBinding(
     bindingProvider: FragmentT.() -> BindingT,
     lifecycleOwnerProvider: FragmentT.() -> LifecycleOwner
 ) = ViewBindingProperty(bindingProvider, lifecycleOwnerProvider)

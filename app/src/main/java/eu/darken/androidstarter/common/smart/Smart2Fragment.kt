@@ -16,7 +16,7 @@ abstract class Smart2Fragment(@LayoutRes layoutRes: Int?) : SmartFragment(layout
     constructor() : this(null)
 
     abstract val ui: ViewBinding?
-    abstract val vdc: Smart2VM
+    abstract val vm: Smart2VM
 
     var onErrorEvent: ((Throwable) -> Boolean)? = null
 
@@ -25,13 +25,13 @@ abstract class Smart2Fragment(@LayoutRes layoutRes: Int?) : SmartFragment(layout
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        vdc.navEvents.observe2(ui) {
+        vm.navEvents.observe2(ui) {
             log { "navEvents: $it" }
 
             it?.run { doNavigate(this) } ?: onFinishEvent?.invoke() ?: popBackStack()
         }
 
-        vdc.errorEvents.observe2(ui) {
+        vm.errorEvents.observe2(ui) {
             val showDialog = onErrorEvent?.invoke(it) ?: true
             if (showDialog) it.asErrorDialogBuilder(requireContext()).show()
         }

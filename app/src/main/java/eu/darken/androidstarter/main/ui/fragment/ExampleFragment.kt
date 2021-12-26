@@ -8,15 +8,15 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.androidstarter.R
 import eu.darken.androidstarter.common.observe2
-import eu.darken.androidstarter.common.smart.SmartFragment
-import eu.darken.androidstarter.common.viewbinding.viewBindingLazy
+import eu.darken.androidstarter.common.smart.Smart2Fragment
+import eu.darken.androidstarter.common.viewbinding.viewBinding
 import eu.darken.androidstarter.databinding.ExampleFragmentBinding
 
 @AndroidEntryPoint
-class ExampleFragment : SmartFragment(R.layout.example_fragment) {
+class ExampleFragment : Smart2Fragment(R.layout.example_fragment) {
 
-    private val vm: ExampleFragmentVM by viewModels()
-    private val binding: ExampleFragmentBinding by viewBindingLazy()
+    override val vm: ExampleFragmentVM by viewModels()
+    override val ui: ExampleFragmentBinding by viewBinding()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +27,7 @@ class ExampleFragment : SmartFragment(R.layout.example_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
+        ui.apply {
             fab.setOnClickListener {
                 findNavController().navigate(R.id.action_exampleFragment_to_anotherFragment)
             }
