@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.viewmodel
+package eu.darken.androidstarter.common.uix
 
 /*
  * Copyright 2018 The Android Open Source Project

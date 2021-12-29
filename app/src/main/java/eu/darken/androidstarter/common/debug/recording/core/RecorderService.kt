@@ -13,7 +13,7 @@ import eu.darken.androidstarter.common.coroutine.DispatcherProvider
 import eu.darken.androidstarter.common.debug.logging.log
 import eu.darken.androidstarter.common.debug.logging.logTag
 import eu.darken.androidstarter.common.notifications.PendingIntentCompat
-import eu.darken.androidstarter.common.ui2.Service2
+import eu.darken.androidstarter.common.uix.Service2
 import eu.darken.androidstarter.main.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob

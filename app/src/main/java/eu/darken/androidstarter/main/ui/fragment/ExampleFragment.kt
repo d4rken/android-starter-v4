@@ -8,7 +8,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.androidstarter.R
 import eu.darken.androidstarter.common.observe2
-import eu.darken.androidstarter.common.ui2.Fragment3
+import eu.darken.androidstarter.common.uix.Fragment3
 import eu.darken.androidstarter.common.viewbinding.viewBinding
 import eu.darken.androidstarter.databinding.ExampleFragmentBinding
 

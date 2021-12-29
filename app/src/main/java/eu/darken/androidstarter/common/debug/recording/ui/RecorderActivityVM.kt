@@ -16,7 +16,7 @@ import eu.darken.androidstarter.common.flow.DynamicStateFlow
 import eu.darken.androidstarter.common.flow.onError
 import eu.darken.androidstarter.common.flow.replayingShare
 import eu.darken.androidstarter.common.livedata.SingleLiveEvent
-import eu.darken.androidstarter.common.ui2.ViewModel3
+import eu.darken.androidstarter.common.uix.ViewModel3
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map

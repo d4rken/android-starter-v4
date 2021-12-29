@@ -9,7 +9,7 @@ import androidx.core.view.isInvisible
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.androidstarter.common.debug.logging.logTag
 import eu.darken.androidstarter.common.error.asErrorDialogBuilder
-import eu.darken.androidstarter.common.ui2.Activity2
+import eu.darken.androidstarter.common.uix.Activity2
 import eu.darken.androidstarter.databinding.DebugRecordingActivityBinding
 
 @AndroidEntryPoint

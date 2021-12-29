@@ -5,7 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.androidstarter.common.coroutine.DispatcherProvider
 import eu.darken.androidstarter.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.androidstarter.common.debug.logging.log
-import eu.darken.androidstarter.common.viewmodel.SmartVM
+import eu.darken.androidstarter.common.uix.ViewModel2
 import eu.darken.androidstarter.main.core.SomeRepo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onEach
@@ -17,7 +17,7 @@ class MainActivityVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     handle: SavedStateHandle,
     private val someRepo: SomeRepo
-) : SmartVM(dispatcherProvider = dispatcherProvider) {
+) : ViewModel2(dispatcherProvider = dispatcherProvider) {
 
     private val stateFlow = MutableStateFlow(State())
     val state = stateFlow

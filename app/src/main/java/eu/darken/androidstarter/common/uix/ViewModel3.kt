@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.ui2
+package eu.darken.androidstarter.common.uix
 
 import androidx.navigation.NavDirections
 import eu.darken.androidstarter.common.coroutine.DispatcherProvider

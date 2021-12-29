@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.ui2
+package eu.darken.androidstarter.common.uix
 
 import android.os.Bundle
 import android.view.View

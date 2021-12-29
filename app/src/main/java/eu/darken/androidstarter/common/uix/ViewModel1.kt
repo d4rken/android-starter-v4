@@ -1,11 +1,11 @@
-package eu.darken.androidstarter.common.viewmodel
+package eu.darken.androidstarter.common.uix
 
 import androidx.annotation.CallSuper
 import androidx.lifecycle.ViewModel
 import eu.darken.androidstarter.common.debug.logging.log
 import eu.darken.androidstarter.common.debug.logging.logTag
 
-abstract class VM : ViewModel() {
+abstract class ViewModel1 : ViewModel() {
     val TAG: String = logTag("VM", javaClass.simpleName)
 
     init {

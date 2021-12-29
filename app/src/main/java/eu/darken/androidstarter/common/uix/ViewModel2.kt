@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.ui2
+package eu.darken.androidstarter.common.uix
 
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,6 @@ import eu.darken.androidstarter.common.debug.logging.asLog
 import eu.darken.androidstarter.common.debug.logging.log
 import eu.darken.androidstarter.common.error.ErrorEventSource
 import eu.darken.androidstarter.common.flow.DynamicStateFlow
-import eu.darken.androidstarter.common.viewmodel.VM
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
@@ -18,7 +17,7 @@ import kotlin.coroutines.CoroutineContext
 
 abstract class ViewModel2(
     private val dispatcherProvider: DispatcherProvider = DefaultDispatcherProvider(),
-) : VM() {
+) : ViewModel1() {
 
     val vmScope = viewModelScope + dispatcherProvider.Default
 
