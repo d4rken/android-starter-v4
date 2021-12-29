@@ -7,4 +7,12 @@
     <string name="action_show_another_fragment">Show another fragment</string>
     <string name="msg_what_up_this_is_another_fragment">What up! This is another fragment!</string>
     <string name="general_error_label">Error</string>
+
+    <string name="general_share_action">Share</string>
+    <string name="general_done_action">Done</string>
+    <string name="debug_debuglog_size_label">Size</string>
+    <string name="debug_debuglog_size_compressed_label">Compressed size</string>
+    <string name="debug_notification_channel_label">Debug notifications</string>
+    <string name="debug_debuglog_file_label">Recorded log file</string>
+    <string name="debug_debuglog_record_action">Record debug log</string>
 </resources>

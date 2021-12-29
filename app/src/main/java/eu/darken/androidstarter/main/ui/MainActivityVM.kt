@@ -24,6 +24,9 @@ class MainActivityVM @Inject constructor(
         .onEach { log(VERBOSE) { "New state: $it" } }
         .asLiveData2()
 
+    private val readyStateInternal = MutableStateFlow(true)
+    val readyState = readyStateInternal.asLiveData2()
+
     init {
         log { "ViewModel: $ this" }
         log { "SavedStateHandle: ${handle.keys()}" }

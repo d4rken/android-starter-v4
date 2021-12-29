@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.smart
+package eu.darken.androidstarter.common.ui2
 
 import android.content.Context
 import android.content.Intent
@@ -18,10 +18,10 @@ import eu.darken.androidstarter.common.navigation.popBackStack
 import eu.darken.androidstarter.common.observe2
 
 
-abstract class Smart2BottomSheetDialogFragment : BottomSheetDialogFragment() {
+abstract class BottomSheetDialogFragment2 : BottomSheetDialogFragment() {
 
     abstract val ui: ViewBinding
-    abstract val vdc: Smart2VM
+    abstract val vdc: ViewModel3
 
     internal val tag: String =
         logTag("Fragment", "${this.javaClass.simpleName}(${Integer.toHexString(hashCode())})")

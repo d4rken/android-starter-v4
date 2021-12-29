@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.smart
+package eu.darken.androidstarter.common.ui2
 
 import android.content.Context
 import android.content.Intent
@@ -13,7 +13,7 @@ import eu.darken.androidstarter.common.debug.logging.log
 import eu.darken.androidstarter.common.debug.logging.logTag
 
 
-abstract class SmartFragment(@LayoutRes val layoutRes: Int?) : Fragment(layoutRes ?: 0) {
+abstract class Fragment2(@LayoutRes val layoutRes: Int?) : Fragment(layoutRes ?: 0) {
 
     constructor() : this(null)
 

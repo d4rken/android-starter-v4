@@ -5,7 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.androidstarter.common.coroutine.DispatcherProvider
 import eu.darken.androidstarter.common.debug.logging.log
 import eu.darken.androidstarter.common.navigation.navArgs
-import eu.darken.androidstarter.common.smart.Smart2VM
+import eu.darken.androidstarter.common.ui2.ViewModel3
 import eu.darken.androidstarter.main.core.SomeRepo
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -15,7 +15,7 @@ class ExampleFragmentVM @Inject constructor(
     handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     someRepo: SomeRepo,
-) : Smart2VM(dispatcherProvider = dispatcherProvider) {
+) : ViewModel3(dispatcherProvider = dispatcherProvider) {
     private val navArgs by handle.navArgs<ExampleFragmentArgs>()
 
     private val stateFlow = combine(

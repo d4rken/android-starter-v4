@@ -8,12 +8,12 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.androidstarter.R
 import eu.darken.androidstarter.common.observe2
-import eu.darken.androidstarter.common.smart.Smart2Fragment
+import eu.darken.androidstarter.common.ui2.Fragment3
 import eu.darken.androidstarter.common.viewbinding.viewBinding
 import eu.darken.androidstarter.databinding.ExampleFragmentBinding
 
 @AndroidEntryPoint
-class ExampleFragment : Smart2Fragment(R.layout.example_fragment) {
+class ExampleFragment : Fragment3(R.layout.example_fragment) {
 
     override val vm: ExampleFragmentVM by viewModels()
     override val ui: ExampleFragmentBinding by viewBinding()

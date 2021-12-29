@@ -1,57 +1,45 @@
 package eu.darken.androidstarter.main.ui
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.core.os.bundleOf
-import androidx.navigation.findNavController
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.androidstarter.R
-import eu.darken.androidstarter.common.navigation.isGraphSet
-import eu.darken.androidstarter.common.smart.SmartActivity
+import eu.darken.androidstarter.common.debug.recording.core.RecorderModule
+import eu.darken.androidstarter.common.navigation.findNavController
+import eu.darken.androidstarter.common.ui2.Activity2
+import eu.darken.androidstarter.databinding.MainActivityBinding
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : SmartActivity() {
+class MainActivity : Activity2() {
 
     private val vm: MainActivityVM by viewModels()
-    private val navController by lazy { findNavController(R.id.nav_host_fragment) }
+    private lateinit var ui: MainActivityBinding
+    private val navController by lazy { supportFragmentManager.findNavController(R.id.nav_host) }
+
+    var showSplashScreen = true
+
+    @Inject lateinit var recorderModule: RecorderModule
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.BaseAppTheme)
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.main_activity)
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepVisibleCondition { showSplashScreen && savedInstanceState == null }
 
-        vm.state.observe(this) {
-            if (it.ready && !navController.isGraphSet()) {
-                val graph = navController.navInflater.inflate(R.navigation.main)
+        ui = MainActivityBinding.inflate(layoutInflater)
+        setContentView(ui.root)
 
-                navController.setGraph(graph, bundleOf("exampleArgument" to "hello"))
-                setupActionBarWithNavController(navController)
-            }
-        }
-
-
-        vm.onGo()
+        vm.readyState.observe2 { showSplashScreen = false }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(B_KEY_SPLASH, showSplashScreen)
+        super.onSaveInstanceState(outState)
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.action_settings -> {
-            // NOOP
-            true
-        }
-        else -> NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item)
+    companion object {
+        private const val B_KEY_SPLASH = "showSplashScreen"
     }
 }

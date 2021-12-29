@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.smart
+package eu.darken.androidstarter.common.ui2
 
 import android.app.Service
 import android.content.Intent
@@ -6,7 +6,7 @@ import android.content.res.Configuration
 import eu.darken.androidstarter.common.debug.logging.log
 import eu.darken.androidstarter.common.debug.logging.logTag
 
-abstract class SmartService : Service() {
+abstract class Service2 : Service() {
     private val tag: String =
         logTag("Service", this.javaClass.simpleName + "(" + Integer.toHexString(this.hashCode()) + ")")
 

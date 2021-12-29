@@ -1,13 +1,14 @@
-package eu.darken.androidstarter.common.smart
+package eu.darken.androidstarter.common.ui2
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
 import eu.darken.androidstarter.common.debug.logging.Logging.Priority.VERBOSE
 import eu.darken.androidstarter.common.debug.logging.log
 import eu.darken.androidstarter.common.debug.logging.logTag
 
-abstract class SmartActivity : AppCompatActivity() {
+abstract class Activity2 : AppCompatActivity() {
     internal val tag: String =
         logTag("Activity", this.javaClass.simpleName + "(" + Integer.toHexString(hashCode()) + ")")
 
@@ -34,6 +35,10 @@ abstract class SmartActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         log(tag, VERBOSE) { "onActivityResult(requestCode=$requestCode, resultCode=$resultCode, data=$data)" }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    fun <T> LiveData<T>.observe2(callback: (T) -> Unit) {
+        observe(this@Activity2) { callback.invoke(it) }
     }
 
 }

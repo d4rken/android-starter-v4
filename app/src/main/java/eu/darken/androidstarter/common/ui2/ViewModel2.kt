@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.smart
+package eu.darken.androidstarter.common.ui2
 
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlin.coroutines.CoroutineContext
 
 
-abstract class SmartVM(
+abstract class ViewModel2(
     private val dispatcherProvider: DispatcherProvider = DefaultDispatcherProvider(),
 ) : VM() {
 
