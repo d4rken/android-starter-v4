@@ -14,6 +14,10 @@ android {
 
     compileSdkVersion buildConfig.compileSdk
 
+    Properties bugsnagProps = new Properties()
+    def bugsnagPropsFile = new File(System.properties['user.home'], ".appconfig/${packageName}/bugsnag.properties")
+    if (bugsnagPropsFile.canRead()) bugsnagProps.load(new FileInputStream(bugsnagPropsFile))
+
     defaultConfig {
         applicationId "${packageName}"
 
@@ -27,6 +31,8 @@ android {
 
         buildConfigField "String", "GITSHA", "\"${gitSha}\""
         buildConfigField "String", "BUILDTIME", "\"${buildTime}\""
+
+        manifestPlaceholders = [bugsnagApiKey: "fake"]
     }
 
     signingConfigs {
@@ -49,7 +55,6 @@ android {
     buildTypes {
         def proguardRulesRelease = fileTree(dir: "../proguard", include: ["*.pro"]).asList().toArray()
         debug {
-            ext.enableBugsnag = false
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
@@ -62,7 +67,6 @@ android {
                 abortOnError true
                 fatal 'StopShip'
             }
-            ext.enableBugsnag = true
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')

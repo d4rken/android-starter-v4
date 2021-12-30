@@ -7,6 +7,7 @@ import com.bugsnag.android.Event
 import com.bugsnag.android.OnErrorCallback
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.androidstarter.BuildConfig
+import eu.darken.androidstarter.common.debug.autoreport.DebugSettings
 import eu.darken.androidstarter.common.debug.logging.Logging.Priority.WARN
 import eu.darken.androidstarter.common.debug.logging.asLog
 import eu.darken.androidstarter.common.debug.logging.log
@@ -17,6 +18,7 @@ import javax.inject.Singleton
 class BugsnagErrorHandler @Inject constructor(
     @ApplicationContext private val context: Context,
     private val bugsnagLogger: BugsnagLogger,
+    private val debugSettings: DebugSettings,
 ) : OnErrorCallback {
 
     override fun onError(event: Event): Boolean {
@@ -29,7 +31,7 @@ class BugsnagErrorHandler @Inject constructor(
             context.tryFormattedSignature()?.let { event.addMetadata(tab, "signatures", it) }
         }
 
-        return !BuildConfig.DEBUG
+        return debugSettings.isAutoReportingEnabled.value && !BuildConfig.DEBUG
     }
 
     companion object {

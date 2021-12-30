@@ -15,6 +15,6 @@ class DebugSettings @Inject constructor(
         context.getSharedPreferences("debug_settings", Context.MODE_PRIVATE)
     }
 
-    val isEnabled = prefs.createFlowPreference("debug.bugreport.automatic.enabled", true)
+    val isAutoReportingEnabled = prefs.createFlowPreference("debug.bugreport.automatic.enabled", true)
 
 }
