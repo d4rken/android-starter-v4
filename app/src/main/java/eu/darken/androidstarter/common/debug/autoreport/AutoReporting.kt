@@ -1,13 +1,14 @@
-package eu.darken.androidstarter.bugreporting
+package eu.darken.androidstarter.common.debug.autoreport
 
 import android.content.Context
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.androidstarter.common.InstallId
-import eu.darken.androidstarter.common.debug.bugsnag.BugsnagErrorHandler
-import eu.darken.androidstarter.common.debug.bugsnag.BugsnagLogger
-import eu.darken.androidstarter.common.debug.bugsnag.NOPBugsnagErrorHandler
+import eu.darken.androidstarter.common.debug.Bugs
+import eu.darken.androidstarter.common.debug.autoreport.bugsnag.BugsnagErrorHandler
+import eu.darken.androidstarter.common.debug.autoreport.bugsnag.BugsnagLogger
+import eu.darken.androidstarter.common.debug.autoreport.bugsnag.NOPBugsnagErrorHandler
 import eu.darken.androidstarter.common.debug.logging.Logging
 import eu.darken.androidstarter.common.debug.logging.log
 import eu.darken.androidstarter.common.debug.logging.logTag
@@ -16,9 +17,9 @@ import javax.inject.Provider
 import javax.inject.Singleton
 
 @Singleton
-class BugReporter @Inject constructor(
+class AutoReporting @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val bugReporterSettings: BugReporterSettings,
+    private val bugReportSettings: DebugSettings,
     private val installId: InstallId,
     private val bugsnagLogger: Provider<BugsnagLogger>,
     private val bugsnagErrorHandler: Provider<BugsnagErrorHandler>,
@@ -26,12 +27,12 @@ class BugReporter @Inject constructor(
 ) {
 
     fun setup() {
-        val isEnabled = bugReporterSettings.isEnabled.value
+        val isEnabled = bugReportSettings.isEnabled.value
         log(TAG) { "setup(): isEnabled=$isEnabled" }
 
         try {
             val bugsnagConfig = Configuration.load(context).apply {
-                if (bugReporterSettings.isEnabled.value) {
+                if (bugReportSettings.isEnabled.value) {
                     Logging.install(bugsnagLogger.get())
                     setUser(installId.id, null, null)
                     autoTrackSessions = true
@@ -45,12 +46,13 @@ class BugReporter @Inject constructor(
             }
 
             Bugsnag.start(context, bugsnagConfig)
+            Bugs.ready = true
         } catch (e: IllegalStateException) {
             log(TAG) { "Bugsnag API Key not configured." }
         }
     }
 
     companion object {
-        private val TAG = logTag("BugReporter")
+        private val TAG = logTag("Debug", "AutoReporting")
     }
 }

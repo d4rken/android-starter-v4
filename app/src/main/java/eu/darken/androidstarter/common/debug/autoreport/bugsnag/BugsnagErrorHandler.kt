@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.debug.bugsnag
+package eu.darken.androidstarter.common.debug.autoreport.bugsnag
 
 import android.annotation.SuppressLint
 import android.content.Context

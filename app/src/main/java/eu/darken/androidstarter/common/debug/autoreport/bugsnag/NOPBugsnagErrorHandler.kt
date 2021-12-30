@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.debug.bugsnag
+package eu.darken.androidstarter.common.debug.autoreport.bugsnag
 
 import com.bugsnag.android.Event
 import com.bugsnag.android.OnErrorCallback

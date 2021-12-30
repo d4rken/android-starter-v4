@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.debug.bugreporting
+package eu.darken.androidstarter.common.debug
 
 import com.bugsnag.android.Bugsnag
 import eu.darken.androidstarter.common.debug.logging.Logging.Priority.VERBOSE
@@ -17,5 +17,5 @@ object Bugs {
         Bugsnag.notify(exception)
     }
 
-    private val TAG = logTag("Bugs")
+    private val TAG = logTag("Debug", "Bugs")
 }
