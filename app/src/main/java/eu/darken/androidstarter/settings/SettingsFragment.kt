@@ -3,6 +3,7 @@ package eu.darken.androidstarter.settings
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -19,10 +20,14 @@ class SettingsFragment : Fragment2(R.layout.settings_fragment),
 
     private val vm: SettingsFragmentVM by viewModels()
     private val ui: SettingsFragmentBinding by viewBinding()
-    private val screenInfos = ArrayList<ScreenInfo>()
+
+    val toolbar: Toolbar
+        get() = ui.toolbar
+
+    private val screens = ArrayList<Screen>()
 
     @Parcelize
-    data class ScreenInfo(
+    data class Screen(
         val fragmentClass: String,
         val screenTitle: String?
     ) : Parcelable
@@ -31,11 +36,11 @@ class SettingsFragment : Fragment2(R.layout.settings_fragment),
         childFragmentManager.addOnBackStackChangedListener {
             val backStackCnt = childFragmentManager.backStackEntryCount
             val newScreenInfo = when {
-                backStackCnt < screenInfos.size -> {
+                backStackCnt < screens.size -> {
                     // We popped the backstack, restore the underlying screen infos
                     // If there are none left, we are at the index again
-                    screenInfos.removeLastOrNull()
-                    screenInfos.lastOrNull() ?: ScreenInfo(
+                    screens.removeLastOrNull()
+                    screens.lastOrNull() ?: Screen(
                         fragmentClass = SettingsIndexFragment::class.qualifiedName!!,
                         screenTitle = getString(R.string.label_settings)
                     )
@@ -55,10 +60,10 @@ class SettingsFragment : Fragment2(R.layout.settings_fragment),
                 .replace(R.id.content_frame, SettingsIndexFragment())
                 .commit()
         } else {
-            savedInstanceState.getParcelableArrayList<ScreenInfo>(BKEY_SCREEN_INFOS)?.let {
-                screenInfos.addAll(it)
+            savedInstanceState.getParcelableArrayList<Screen>(BKEY_SCREEN_INFOS)?.let {
+                screens.addAll(it)
             }
-            screenInfos.lastOrNull()?.let { setCurrentScreenInfo(it) }
+            screens.lastOrNull()?.let { setCurrentScreenInfo(it) }
         }
 
         ui.toolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
@@ -69,11 +74,11 @@ class SettingsFragment : Fragment2(R.layout.settings_fragment),
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList(BKEY_SCREEN_INFOS, screenInfos)
+        outState.putParcelableArrayList(BKEY_SCREEN_INFOS, screens)
     }
 
     override fun onPreferenceStartFragment(caller: PreferenceFragmentCompat, pref: Preference): Boolean {
-        val screenInfo = ScreenInfo(
+        val screenInfo = Screen(
             fragmentClass = pref.fragment,
             screenTitle = pref.title?.toString()
         )
@@ -91,7 +96,7 @@ class SettingsFragment : Fragment2(R.layout.settings_fragment),
             }
 
         setCurrentScreenInfo(screenInfo)
-        screenInfos.add(screenInfo)
+        screens.add(screenInfo)
 
         childFragmentManager.beginTransaction().apply {
             replace(R.id.content_frame, fragment)
@@ -102,8 +107,10 @@ class SettingsFragment : Fragment2(R.layout.settings_fragment),
     }
 
 
-    private fun setCurrentScreenInfo(info: ScreenInfo) {
-        ui.toolbar.title = info.screenTitle
+    private fun setCurrentScreenInfo(info: Screen) {
+        ui.toolbar.apply {
+            title = info.screenTitle
+        }
     }
 
     companion object {

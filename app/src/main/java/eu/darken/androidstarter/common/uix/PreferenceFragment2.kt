@@ -2,10 +2,17 @@ package eu.darken.androidstarter.common.uix
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import androidx.annotation.MenuRes
 import androidx.annotation.XmlRes
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceFragmentCompat
 import eu.darken.androidstarter.common.preferences.Settings
+import eu.darken.androidstarter.settings.SettingsFragment
 
 abstract class PreferenceFragment2
     : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -14,6 +21,14 @@ abstract class PreferenceFragment2
 
     @get:XmlRes
     abstract val preferenceFile: Int
+
+    val toolbar: Toolbar
+        get() = (parentFragment as SettingsFragment).toolbar
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        toolbar.menu.clear()
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.preferenceDataStore = settings.preferenceDataStore
@@ -40,5 +55,16 @@ abstract class PreferenceFragment2
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
 
+    }
+
+    fun setupMenu(@MenuRes menuResId: Int, block: (MenuItem) -> Unit) {
+        toolbar.apply {
+            menu.clear()
+            inflateMenu(menuResId)
+            setOnMenuItemClickListener {
+                block(it)
+                true
+            }
+        }
     }
 }
