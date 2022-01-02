@@ -20,7 +20,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".settings.ui.SettingsActivity" />
 
         <receiver
             android:name="eu.darken.androidstarter.main.core.receiver.ExampleReceiver"

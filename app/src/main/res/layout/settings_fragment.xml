@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".settings.ui.SettingsActivity">
+    tools:context=".main.ui.MainActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -14,8 +14,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/menu_main"
-        app:title="@string/app_name" />
+        app:menu="@menu/menu_settings"
+        app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
+        app:title="@string/label_settings" />
 
     <FrameLayout
         android:id="@+id/content_frame"

@@ -1,5 +1,6 @@
 package eu.darken.androidstarter.settings
 
+import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -14,7 +15,7 @@ import eu.darken.androidstarter.main.core.GeneralSettings
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class IndexFragment : PreferenceFragment2() {
+class SettingsIndexFragment : PreferenceFragment2() {
 
     @Inject lateinit var generalSettings: GeneralSettings
     override val settings: Settings
@@ -23,7 +24,8 @@ class IndexFragment : PreferenceFragment2() {
 
     @Inject lateinit var webpageTool: WebpageTool
 
-    init {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
@@ -34,7 +36,7 @@ class IndexFragment : PreferenceFragment2() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_settings_index, menu)
+        inflater.inflate(R.menu.menu_settings, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -45,5 +47,4 @@ class IndexFragment : PreferenceFragment2() {
         }
         else -> super.onOptionsItemSelected(item)
     }
-
 }

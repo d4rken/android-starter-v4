@@ -13,12 +13,16 @@
             android:name="exampleArgument"
             app:argType="string" />
         <action
-            android:id="@+id/action_exampleFragment_to_settingsActivity"
-            app:destination="@id/settingsActivity" />
+            android:id="@+id/action_exampleFragment_to_settingsContainerFragment"
+            app:destination="@id/settingsContainerFragment" />
     </fragment>
-    <activity
-        android:id="@+id/settingsActivity"
-        android:name="eu.darken.androidstarter.settings.ui.SettingsActivity"
-        android:label="SettingsActivity" />
+    <fragment
+        android:id="@+id/settingsContainerFragment"
+        android:name="eu.darken.androidstarter.settings.SettingsFragment"
+        android:label="SettingsContainerFragment" />
+    <!--    <activity-->
+    <!--        android:id="@+id/settingsActivity"-->
+    <!--        android:name="eu.darken.androidstarter.settings.SettingsActivity"-->
+    <!--        android:label="SettingsActivity" />-->
 
 </navigation>

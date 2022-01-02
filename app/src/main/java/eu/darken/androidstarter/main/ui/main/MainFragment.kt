@@ -27,7 +27,7 @@ class MainFragment : Fragment3(R.layout.main_fragment) {
                         true
                     }
                     R.id.action_settings -> {
-                        doNavigate(MainFragmentDirections.actionExampleFragmentToSettingsActivity())
+                        doNavigate(MainFragmentDirections.actionExampleFragmentToSettingsContainerFragment())
                         true
                     }
                     else -> super.onOptionsItemSelected(it)
