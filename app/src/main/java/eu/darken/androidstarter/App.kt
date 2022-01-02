@@ -3,14 +3,14 @@ package eu.darken.androidstarter
 import android.app.Application
 import com.getkeepsafe.relinker.ReLinker
 import dagger.hilt.android.HiltAndroidApp
-import eu.darken.androidstarter.bugreporting.BugReporter
+import eu.darken.androidstarter.common.debug.autoreport.AutoReporting
 import eu.darken.androidstarter.common.debug.logging.*
 import javax.inject.Inject
 
 @HiltAndroidApp
 open class App : Application() {
 
-    @Inject lateinit var bugReporter: BugReporter
+    @Inject lateinit var bugReporter: AutoReporting
 
     override fun onCreate() {
         super.onCreate()

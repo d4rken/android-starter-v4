@@ -6,23 +6,19 @@
     app:startDestination="@id/exampleFragment">
     <fragment
         android:id="@+id/exampleFragment"
-        android:name="eu.darken.androidstarter.main.ui.fragment.ExampleFragment"
-        tools:layout="@layout/example_fragment"
+        android:name="eu.darken.androidstarter.main.ui.main.MainFragment"
+        tools:layout="@layout/main_fragment"
         android:label="@string/label_example_fragment">
         <argument
             android:name="exampleArgument"
             app:argType="string" />
         <action
-            android:id="@+id/action_exampleFragment_to_anotherFragment"
-            app:destination="@id/anotherFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            android:id="@+id/action_exampleFragment_to_settingsActivity"
+            app:destination="@id/settingsActivity" />
     </fragment>
-    <fragment
-        android:id="@+id/anotherFragment"
-        android:name="eu.darken.androidstarter.main.ui.anotherfrag.AnotherFragment"
-        tools:layout="@layout/another_fragment"
-        android:label="@string/label_another_fragment" />
+    <activity
+        android:id="@+id/settingsActivity"
+        android:name="eu.darken.androidstarter.settings.ui.SettingsActivity"
+        android:label="SettingsActivity" />
+
 </navigation>

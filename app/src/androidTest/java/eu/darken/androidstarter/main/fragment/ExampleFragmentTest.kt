@@ -5,8 +5,8 @@ import androidx.lifecycle.liveData
 import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import eu.darken.androidstarter.main.ui.fragment.ExampleFragment
-import eu.darken.androidstarter.main.ui.fragment.ExampleFragmentVM
+import eu.darken.androidstarter.main.ui.main.MainFragment
+import eu.darken.androidstarter.main.ui.main.MainFragmentVM
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -26,7 +26,7 @@ class ExampleFragmentTest : BaseUITest() {
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @BindValue
-    val mockViewModel = mockk<ExampleFragmentVM>(relaxed = true)
+    val mockViewModel = mockk<MainFragmentVM>(relaxed = true)
 
     @Before fun init() {
         hiltRule.inject()
@@ -37,7 +37,7 @@ class ExampleFragmentTest : BaseUITest() {
     }
 
     @Test fun happyPath() {
-        launchFragmentInHiltContainer<ExampleFragment>()
+        launchFragmentInHiltContainer<MainFragment>()
 
         verify { mockViewModel.state }
     }

@@ -23,7 +23,7 @@ abstract class ViewModel2(
 
     var launchErrorHandler: CoroutineExceptionHandler? = null
 
-    private fun getVDCContext(): CoroutineContext {
+    private fun getVMContext(): CoroutineContext {
         val dispatcher = dispatcherProvider.Default
         return getErrorHandler()?.let { dispatcher + it } ?: dispatcher
     }
@@ -44,11 +44,11 @@ abstract class ViewModel2(
 
     fun <T : Any> DynamicStateFlow<T>.asLiveData2() = flow.asLiveData2()
 
-    fun <T> Flow<T>.asLiveData2() = this.asLiveData(context = getVDCContext())
+    fun <T> Flow<T>.asLiveData2() = this.asLiveData(context = getVMContext())
 
     fun launch(
         scope: CoroutineScope = viewModelScope,
-        context: CoroutineContext = getVDCContext(),
+        context: CoroutineContext = getVMContext(),
         block: suspend CoroutineScope.() -> Unit
     ) {
         try {

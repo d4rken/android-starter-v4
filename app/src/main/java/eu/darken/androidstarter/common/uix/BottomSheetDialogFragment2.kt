@@ -21,7 +21,7 @@ import eu.darken.androidstarter.common.observe2
 abstract class BottomSheetDialogFragment2 : BottomSheetDialogFragment() {
 
     abstract val ui: ViewBinding
-    abstract val vdc: ViewModel3
+    abstract val vm: ViewModel3
 
     internal val tag: String =
         logTag("Fragment", "${this.javaClass.simpleName}(${Integer.toHexString(hashCode())})")
@@ -47,8 +47,8 @@ abstract class BottomSheetDialogFragment2 : BottomSheetDialogFragment() {
         log(tag, VERBOSE) { "onViewCreated(view=$view, savedInstanceState=$savedInstanceState)" }
         super.onViewCreated(view, savedInstanceState)
 
-        vdc.navEvents.observe2(this, ui) { dir -> dir?.let { doNavigate(it) } ?: popBackStack() }
-        vdc.errorEvents.observe2(this, ui) { it.asErrorDialogBuilder(requireContext()).show() }
+        vm.navEvents.observe2(this, ui) { dir -> dir?.let { doNavigate(it) } ?: popBackStack() }
+        vm.errorEvents.observe2(this, ui) { it.asErrorDialogBuilder(requireContext()).show() }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

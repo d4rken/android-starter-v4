@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.main.ui.fragment
+package eu.darken.androidstarter.main.ui.main
 
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 @HiltViewModel
-class ExampleFragmentVM @Inject constructor(
+class MainFragmentVM @Inject constructor(
     handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     someRepo: SomeRepo,
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
-    private val navArgs by handle.navArgs<ExampleFragmentArgs>()
+    private val navArgs by handle.navArgs<MainFragmentArgs>()
 
     private val stateFlow = combine(
         someRepo.countsWhileSubscribed,
