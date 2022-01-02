@@ -12,7 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceFragmentCompat
 import eu.darken.androidstarter.common.preferences.Settings
-import eu.darken.androidstarter.settings.SettingsFragment
+import eu.darken.androidstarter.main.ui.settings.SettingsFragment
 
 abstract class PreferenceFragment2
     : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {

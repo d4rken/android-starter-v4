@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
         android:icon="@drawable/ic_baseline_settings_24"
-        app:fragment="eu.darken.androidstarter.settings.general.GeneralSettingsFragment"
+        app:fragment="eu.darken.androidstarter.main.ui.settings.general.GeneralSettingsFragment"
         app:summary="@string/general_settings_desc"
         app:title="@string/general_settings_label" />
 
@@ -21,7 +21,7 @@
 
         <Preference
             android:icon="@drawable/ic_heart"
-            app:fragment="eu.darken.androidstarter.settings.acks.AcknowledgementsFragment"
+            app:fragment="eu.darken.androidstarter.main.ui.settings.acks.AcknowledgementsFragment"
             app:summary="@string/general_thank_you_label"
             app:title="@string/settings_acknowledgements_label" />
 

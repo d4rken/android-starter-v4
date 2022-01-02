@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.settings
+package eu.darken.androidstarter.main.ui.settings
 
 import android.os.Bundle
 import android.os.Parcelable

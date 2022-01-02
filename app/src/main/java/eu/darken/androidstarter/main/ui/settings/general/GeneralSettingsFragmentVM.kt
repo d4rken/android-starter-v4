@@ -1,17 +1,20 @@
-package eu.darken.androidstarter.settings.acks
+package eu.darken.androidstarter.main.ui.settings.general
 
 import androidx.lifecycle.SavedStateHandle
-import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import eu.darken.androidstarter.common.coroutine.DispatcherProvider
 import eu.darken.androidstarter.common.debug.logging.logTag
 import eu.darken.androidstarter.common.uix.ViewModel3
+import javax.inject.Inject
 
-class AcknowledgementsFragmentVM @AssistedInject constructor(
+@HiltViewModel
+class GeneralSettingsFragmentVM @Inject constructor(
     private val handle: SavedStateHandle,
-    private val dispatcherProvider: DispatcherProvider
+    private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel3(dispatcherProvider) {
 
+
     companion object {
-        private val TAG = logTag("Settings", "Acknowledgements", "VM")
+        private val TAG = logTag("Settings", "General", "VM")
     }
 }

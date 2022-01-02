@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.settings.support
+package eu.darken.androidstarter.main.ui.settings.support
 
 import android.content.Intent
 import android.os.Build

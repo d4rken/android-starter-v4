@@ -4,7 +4,7 @@
 
     <Preference
         android:icon="@drawable/ic_card_text_onsurface"
-        app:fragment="eu.darken.androidstarter.settings.general.advanced.AdvancedSettingsFragment"
+        app:fragment="eu.darken.androidstarter.main.ui.settings.general.advanced.AdvancedSettingsFragment"
         app:summary="Advanced settings summary"
         app:title="Advanced settings" />
 

@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.settings.general.advanced
+package eu.darken.androidstarter.main.ui.settings.acks
 
 import androidx.annotation.Keep
 import androidx.fragment.app.viewModels
@@ -10,13 +10,13 @@ import javax.inject.Inject
 
 @Keep
 @AndroidEntryPoint
-class AdvancedSettingsFragment : PreferenceFragment2() {
+class AcknowledgementsFragment : PreferenceFragment2() {
 
-    private val vdc: AdvancedSettingsFragmentVM by viewModels()
+    private val vm: AcknowledgementsFragmentVM by viewModels()
 
+    override val preferenceFile: Int = R.xml.preferences_acknowledgements
     @Inject lateinit var debugSettings: GeneralSettings
 
     override val settings: GeneralSettings by lazy { debugSettings }
-    override val preferenceFile: Int = R.xml.preferences_advanced
 
 }

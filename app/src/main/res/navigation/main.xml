@@ -18,7 +18,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingsContainerFragment"
-        android:name="eu.darken.androidstarter.settings.SettingsFragment"
+        android:name="eu.darken.androidstarter.main.ui.settings.SettingsFragment"
         android:label="SettingsContainerFragment" />
     <!--    <activity-->
     <!--        android:id="@+id/settingsActivity"-->

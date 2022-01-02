@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.settings
+package eu.darken.androidstarter.main.ui.settings
 
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
