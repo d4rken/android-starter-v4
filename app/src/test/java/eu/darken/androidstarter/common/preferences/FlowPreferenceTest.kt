@@ -1,6 +1,5 @@
-package eu.darken.capod.common.preferences
+package eu.darken.androidstarter.common.preferences
 
-import eu.darken.androidstarter.common.preferences.createFlowPreference
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest

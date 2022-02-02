@@ -18,16 +18,17 @@ class MainFragmentVM @Inject constructor(
 ) : ViewModel3(dispatcherProvider = dispatcherProvider) {
     private val navArgs by handle.navArgs<MainFragmentArgs>()
 
-    private val stateFlow = combine(
+    val listItems = combine(
         someRepo.countsWhileSubscribed,
         someRepo.countsAlways,
         someRepo.emojis
     ) { whileSubbed, always, emoji ->
-        State(
-            data = "WhileSubbed=$whileSubbed Always=$always $emoji"
+        listOf(
+            SomeAdapter.Item("whileSubbed", number = whileSubbed) {},
+            SomeAdapter.Item("always", number = always) {},
+            SomeAdapter.Item("emoji $emoji", number = emoji.hashCode().toLong()) {},
         )
-    }
-    val state = stateFlow.asLiveData2()
+    }.asLiveData2()
 
     init {
         log { "ViewModel: $this" }
@@ -36,8 +37,4 @@ class MainFragmentVM @Inject constructor(
         log { "Default args: ${handle.get<String>("fragmentArg")}" }
 //        Timber.d("NavArgs: %s", navArgs)
     }
-
-    data class State(
-        val data: String = "?"
-    )
 }
