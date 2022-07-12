@@ -11,21 +11,23 @@ import io.mockk.mockk
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.*
 import org.junit.jupiter.api.Test
 import testhelper.BaseTest
-import testhelper.coroutine.runBlockingTest2
+import testhelper.coroutine.runTest2
 import testhelper.flow.test
 import java.io.IOException
 import java.lang.Thread.sleep
 import kotlin.concurrent.thread
+import kotlin.coroutines.EmptyCoroutineContext
 
 class DynamicStateFlowTest : BaseTest() {
 
     // Without an init value, there isn't a way to keep using the flow
     @Test
     fun `exceptions on initialization are rethrown`() {
-        val testScope = TestCoroutineScope()
+        val testScope =
+            createTestCoroutineScope(TestCoroutineDispatcher() + TestCoroutineExceptionHandler() + EmptyCoroutineContext)
         val hotData = DynamicStateFlow<String>(
             loggingTag = "tag",
             parentScope = testScope,
@@ -46,7 +48,8 @@ class DynamicStateFlowTest : BaseTest() {
 
     @Test
     fun `subscription doesn't end when no subscriber is collecting, mode Lazily`() {
-        val testScope = TestCoroutineScope()
+        val testScope =
+            createTestCoroutineScope(TestCoroutineDispatcher() + TestCoroutineExceptionHandler() + EmptyCoroutineContext)
         val valueProvider = mockk<suspend CoroutineScope.() -> String>()
         coEvery { valueProvider.invoke(any()) } returns "Test"
 
@@ -58,7 +61,7 @@ class DynamicStateFlowTest : BaseTest() {
         )
 
         testScope.apply {
-            runBlockingTest2(allowUncompleted = true) {
+            runTest2(autoCancel = true) {
                 hotData.flow.first() shouldBe "Test"
                 hotData.flow.first() shouldBe "Test"
             }
@@ -68,7 +71,8 @@ class DynamicStateFlowTest : BaseTest() {
 
     @Test
     fun `value updates`() {
-        val testScope = TestCoroutineScope()
+        val testScope =
+            createTestCoroutineScope(TestCoroutineDispatcher() + TestCoroutineExceptionHandler() + EmptyCoroutineContext)
         val valueProvider = mockk<suspend CoroutineScope.() -> Long>()
         coEvery { valueProvider.invoke(any()) } returns 1
 
@@ -78,7 +82,7 @@ class DynamicStateFlowTest : BaseTest() {
             startValueProvider = valueProvider,
         )
 
-        val testCollector = hotData.flow.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(scope = testScope)
         testCollector.silent = true
 
         (1..16).forEach { _ ->
@@ -107,7 +111,8 @@ class DynamicStateFlowTest : BaseTest() {
 
     @Test
     fun `check multi threading value updates with more complex data`() {
-        val testScope = TestCoroutineScope()
+        val testScope =
+            createTestCoroutineScope(TestCoroutineDispatcher() + TestCoroutineExceptionHandler() + EmptyCoroutineContext)
         val valueProvider = mockk<suspend CoroutineScope.() -> Map<String, TestData>>()
         coEvery { valueProvider.invoke(any()) } returns mapOf("data" to TestData())
 
@@ -117,7 +122,7 @@ class DynamicStateFlowTest : BaseTest() {
             startValueProvider = valueProvider,
         )
 
-        val testCollector = hotData.flow.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(scope = testScope)
         testCollector.silent = true
 
         (1..10).forEach { _ ->
@@ -144,7 +149,8 @@ class DynamicStateFlowTest : BaseTest() {
 
     @Test
     fun `only emit new values if they actually changed updates`() {
-        val testScope = TestCoroutineScope()
+        val testScope =
+            createTestCoroutineScope(TestCoroutineDispatcher() + TestCoroutineExceptionHandler() + EmptyCoroutineContext)
 
         val hotData = DynamicStateFlow(
             loggingTag = "tag",
@@ -152,7 +158,7 @@ class DynamicStateFlowTest : BaseTest() {
             startValueProvider = { "1" },
         )
 
-        val testCollector = hotData.flow.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(scope = testScope)
         testCollector.silent = true
 
         hotData.updateAsync { "1" }
@@ -167,39 +173,39 @@ class DynamicStateFlowTest : BaseTest() {
     }
 
     @Test
-    fun `multiple subscribers share the flow`() {
-        val testScope = TestCoroutineScope()
+    fun `multiple subscribers share the flow`() = runTest2(autoCancel = true) {
         val valueProvider = mockk<suspend CoroutineScope.() -> String>()
         coEvery { valueProvider.invoke(any()) } returns "Test"
 
         val hotData = DynamicStateFlow(
             loggingTag = "tag",
-            parentScope = testScope,
+            parentScope = this,
             startValueProvider = valueProvider,
         )
 
-        testScope.runBlockingTest2(allowUncompleted = true) {
-            val sub1 = hotData.flow.test(tag = "sub1", startOnScope = this)
-            val sub2 = hotData.flow.test(tag = "sub2", startOnScope = this)
-            val sub3 = hotData.flow.test(tag = "sub3", startOnScope = this)
+        val sub1 = hotData.flow.test(tag = "sub1", scope = this)
+        val sub2 = hotData.flow.test(tag = "sub2", scope = this)
+        val sub3 = hotData.flow.test(tag = "sub3", scope = this)
 
-            hotData.updateAsync { "A" }
-            hotData.updateAsync { "B" }
-            hotData.updateAsync { "C" }
+        hotData.updateAsync { "A" }
+        hotData.updateAsync { "B" }
+        hotData.updateAsync { "C" }
 
-            listOf(sub1, sub2, sub3).forEach {
-                it.await { list, _ -> list.size == 4 }
-                it.latestValues shouldBe listOf("Test", "A", "B", "C")
-                it.cancel()
-            }
+        advanceUntilIdle()
 
-            hotData.flow.first() shouldBe "C"
+        listOf(sub1, sub2, sub3).forEach {
+            it.await { list, _ -> list.size == 4 }
+            it.latestValues shouldBe listOf("Test", "A", "B", "C")
+            it.cancelAndJoin()
         }
+
+        hotData.flow.first() shouldBe "C"
+
         coVerify(exactly = 1) { valueProvider.invoke(any()) }
     }
 
     @Test
-    fun `value is persisted between unsubscribes`() = runBlockingTest2(allowUncompleted = true) {
+    fun `value is persisted between unsubscribes`() = runTest2(autoCancel = true) {
         val valueProvider = mockk<suspend CoroutineScope.() -> Long>()
         coEvery { valueProvider.invoke(any()) } returns 1
 
@@ -210,7 +216,7 @@ class DynamicStateFlowTest : BaseTest() {
             startValueProvider = valueProvider,
         )
 
-        val testCollector1 = hotData.flow.test(tag = "collector1", startOnScope = this)
+        val testCollector1 = hotData.flow.test(tag = "collector1", scope = this)
         testCollector1.silent = false
 
         (1..10).forEach { _ ->
@@ -224,16 +230,14 @@ class DynamicStateFlowTest : BaseTest() {
         testCollector1.await { list, _ -> list.size == 11 }
         testCollector1.latestValues shouldBe (1L..11L).toList()
 
-        testCollector1.cancel()
-        testCollector1.awaitFinal()
+        testCollector1.cancelAndJoin()
 
-        val testCollector2 = hotData.flow.test(tag = "collector2", startOnScope = this)
+        val testCollector2 = hotData.flow.test(tag = "collector2", scope = this)
         testCollector2.silent = false
 
         advanceUntilIdle()
 
-        testCollector2.cancel()
-        testCollector2.awaitFinal()
+        testCollector2.cancelAndJoin()
 
         testCollector2.latestValues shouldBe listOf(11L)
 
@@ -242,7 +246,8 @@ class DynamicStateFlowTest : BaseTest() {
 
     @Test
     fun `blocking update is actually blocking`() = runBlocking {
-        val testScope = TestCoroutineScope()
+        val testScope =
+            createTestCoroutineScope(TestCoroutineDispatcher() + TestCoroutineExceptionHandler() + EmptyCoroutineContext)
         val hotData = DynamicStateFlow(
             loggingTag = "tag",
             parentScope = testScope,
@@ -258,7 +263,7 @@ class DynamicStateFlowTest : BaseTest() {
             this + 1
         }
 
-        val testCollector = hotData.flow.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(scope = testScope)
 
         testScope.advanceUntilIdle()
 
@@ -267,12 +272,13 @@ class DynamicStateFlowTest : BaseTest() {
         testCollector.await { _, i -> i == 3 }
         testCollector.latestValues shouldBe listOf(2, 3, 0)
 
-        testCollector.cancel()
+        testCollector.cancelAndJoin()
     }
 
     @Test
     fun `blocking update rethrows error`() = runBlocking {
-        val testScope = TestCoroutineScope()
+        val testScope =
+            createTestCoroutineScope(TestCoroutineDispatcher() + TestCoroutineExceptionHandler() + EmptyCoroutineContext)
         val hotData = DynamicStateFlow(
             loggingTag = "tag",
             parentScope = testScope,
@@ -283,7 +289,7 @@ class DynamicStateFlowTest : BaseTest() {
             },
         )
 
-        val testCollector = hotData.flow.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(scope = testScope)
 
         testScope.advanceUntilIdle()
 
@@ -297,34 +303,29 @@ class DynamicStateFlowTest : BaseTest() {
 
         testScope.uncaughtExceptions.singleOrNull() shouldBe null
 
-        testCollector.cancel()
+        testCollector.cancelAndJoin()
     }
 
     @Test
-    fun `async updates error handler`() {
-        val testScope = TestCoroutineScope()
-
+    fun `async updates error handler`() = runTest2(expectedError = IOException::class) {
         val hotData = DynamicStateFlow(
             loggingTag = "tag",
-            parentScope = testScope,
+            parentScope = this,
             startValueProvider = { 1 },
         )
 
-        val testCollector = hotData.flow.test(startOnScope = testScope)
-        testScope.advanceUntilIdle()
+        val testCollector = hotData.flow.test(scope = this)
+        advanceUntilIdle()
 
         hotData.updateAsync { throw IOException("Surprise") }
 
-        testScope.advanceUntilIdle()
-
-        testScope.uncaughtExceptions.single() shouldBe instanceOf(IOException::class)
-
-        testCollector.cancel()
+        advanceUntilIdle()
     }
 
     @Test
     fun `async updates rethrow errors on HotDataFlow scope if no error handler is set`() = runBlocking {
-        val testScope = TestCoroutineScope()
+        val testScope =
+            createTestCoroutineScope(TestCoroutineDispatcher() + TestCoroutineExceptionHandler() + EmptyCoroutineContext)
 
         val hotData = DynamicStateFlow(
             loggingTag = "tag",
@@ -332,7 +333,7 @@ class DynamicStateFlowTest : BaseTest() {
             startValueProvider = { 1 },
         )
 
-        val testCollector = hotData.flow.test(startOnScope = testScope)
+        val testCollector = hotData.flow.test(scope = testScope)
         testScope.advanceUntilIdle()
 
         var thrownError: Exception? = null
@@ -346,6 +347,30 @@ class DynamicStateFlowTest : BaseTest() {
         thrownError!!.shouldBeInstanceOf<IOException>()
         testScope.uncaughtExceptions.singleOrNull() shouldBe null
 
-        testCollector.cancel()
+        testCollector.cancelAndJoin()
+    }
+
+    @Test
+    fun `clean up function is called when parent scope is cancelled`() = runTest {
+        val testScope =
+            createTestCoroutineScope(TestCoroutineDispatcher() + TestCoroutineExceptionHandler() + EmptyCoroutineContext)
+
+        var onReleaseValue: String? = null
+
+        val hotData = DynamicStateFlow(
+            loggingTag = "tag",
+            parentScope = testScope,
+            coroutineContext = Dispatchers.Unconfined,
+            startValueProvider = { "Test" },
+            onRelease = {
+                onReleaseValue = it
+            }
+        )
+
+        hotData.flow.first() shouldBe "Test"
+
+        testScope.cancel()
+
+        onReleaseValue shouldBe "Test"
     }
 }
