@@ -20,7 +20,7 @@ buildscript {
     ext.versions = [
             'kotlin'     : [
                     'core'      : '1.6.10',
-                    'coroutines': '1.5.1'
+                    'coroutines': '1.6.0'
             ],
             'dagger'     : [
                     'core': '2.40.5'
