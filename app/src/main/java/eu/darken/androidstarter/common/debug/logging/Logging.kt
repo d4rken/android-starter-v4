@@ -21,6 +21,10 @@ object Logging {
         WARN(5, "W"),
         ERROR(6, "E"),
         ASSERT(7, "WTF");
+
+        companion object {
+            fun fromAndroid(value: Int): Priority = values().firstOrNull { it.intValue == value } ?: ERROR
+        }
     }
 
     interface Logger {

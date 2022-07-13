@@ -105,6 +105,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
         freeCompilerArgs = freeCompilerArgs + listOf(
+            "-Xopt-in=kotlin.ExperimentalStdlibApi",
             "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-Xuse-experimental=kotlinx.coroutines.FlowPreview",
             "-Xuse-experimental=kotlin.time.ExperimentalTime",
@@ -167,6 +168,8 @@ dependencies {
     kapt("com.squareup.moshi:moshi-kotlin-codegen:${Versions.Moshi.core}")
 
     implementation("com.squareup.okio:okio:3.1.0")
+
+    implementation("io.coil-kt:coil:2.0.0-rc02")
 
     // Debugging
     implementation("com.bugsnag:bugsnag-android:5.9.2")
