@@ -19,14 +19,14 @@ buildscript {
 
     ext.versions = [
             'kotlin'     : [
-                    'core'      : '1.6.10',
+                    'core'      : '1.7.10',
                     'coroutines': '1.6.0'
             ],
             'dagger'     : [
-                    'core': '2.40.5'
+                    'core': '2.42'
             ],
             'androidx'   : [
-                    'navigation': '2.3.5'
+                    'navigation': '2.5.0'
             ],
     ]
 
@@ -35,7 +35,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:7.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin.core}"
         classpath "com.google.dagger:hilt-android-gradle-plugin:${versions.dagger.core}"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:${versions.androidx.navigation}"
