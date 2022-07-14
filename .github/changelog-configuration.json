@@ -7,6 +7,13 @@
 	  ]
 	},
 	{
+	  "title": "## \uD83D\uDE80 Improvements",
+	  "labels": [
+		"improved",
+		"polished"
+	  ]
+	},
+	{
 	  "title": "## 🐛 Fixes",
 	  "labels": [
 		"fix",
@@ -14,17 +21,11 @@
 	  ]
 	},
 	{
-	  "title": "## \uD83D\uDE80 Improvements",
-	  "labels": [
-		"improved",
-		"enhancement"
-	  ]
-	},
-	{
 	  "title": "## 💬 Maintenance",
 	  "labels": [
 		"maintenance",
-		"chore"
+		"chore",
+		"bump"
 	  ]
 	}
   ],
