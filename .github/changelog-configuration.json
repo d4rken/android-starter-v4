@@ -3,8 +3,7 @@
 	{
 	  "title": "## 💡 Features",
 	  "labels": [
-		"feature",
-		"enhancement"
+		"feature"
 	  ]
 	},
 	{
@@ -15,9 +14,17 @@
 	  ]
 	},
 	{
+	  "title": "## \uD83D\uDE80 Improvements",
+	  "labels": [
+		"improved",
+		"enhancement"
+	  ]
+	},
+	{
 	  "title": "## 💬 Maintenance",
 	  "labels": [
-		"maintenance"
+		"maintenance",
+		"chore"
 	  ]
 	}
   ],
