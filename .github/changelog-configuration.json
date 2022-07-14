@@ -1,31 +1,21 @@
 {
   "categories": [
 	{
-	  "title": "## 💡 Features",
+	  "title": "## 💡 Enhancements",
 	  "labels": [
-		"feature"
-	  ]
-	},
-	{
-	  "title": "## \uD83D\uDE80 Improvements",
-	  "labels": [
-		"improved",
-		"polished"
+		"enhancement"
 	  ]
 	},
 	{
 	  "title": "## 🐛 Fixes",
 	  "labels": [
-		"fix",
 		"bug"
 	  ]
 	},
 	{
 	  "title": "## 💬 Maintenance",
 	  "labels": [
-		"maintenance",
-		"chore",
-		"bump"
+		"chore"
 	  ]
 	}
   ],
@@ -36,5 +26,5 @@
   "sort": "ASC",
   "template": "${{CHANGELOG}}",
   "pr_template": "- ${{TITLE}} #${{NUMBER}}",
-  "empty_template": "- no changes"
+  "empty_template": "Improvements and bugfixes ¯\\_(ツ)_/¯"
 }
