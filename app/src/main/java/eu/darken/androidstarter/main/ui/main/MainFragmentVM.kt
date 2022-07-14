@@ -25,7 +25,7 @@ class MainFragmentVM @Inject constructor(
     ) { whileSubbed, always, emoji ->
         listOf(
             SomeAdapter.Item("whileSubbed1", number = whileSubbed) {},
-            SomeAdapter.Item("always", number = always) {},
+            SomeAdapter.Item("always2", number = always) {},
             SomeAdapter.Item("emoji $emoji", number = emoji.hashCode().toLong()) {},
         )
     }.asLiveData2()
