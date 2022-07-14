@@ -39,16 +39,22 @@ android {
     signingConfigs {
         create("release") {}
     }
-    val signingPropFile = File(System.getProperty("user.home"), ".appconfig/${packageName}/signing.properties")
-    if (signingPropFile.canRead()) {
-        val signingProps = Properties()
-        signingProps.load(FileInputStream(signingPropFile))
+
+    val signProps = Properties().apply {
+        File(System.getProperty("user.home"), ".appconfig/${packageName}/signing.properties")
+            .takeIf { it.canRead() }
+            ?.let { load(FileInputStream(it)) }
+    }
+    val keyStore = System.getenv("STORE_PATH")?.let { File(it) }
+        ?: signProps.getProperty("release.storePath")?.let { File(it) }
+
+    if (keyStore != null) {
         signingConfigs {
             getByName("release") {
-                storeFile = File(signingProps.getProperty("release.storePath"))
-                keyAlias = signingProps.getProperty("release.keyAlias")
-                storePassword = signingProps.getProperty("release.storePassword")
-                keyPassword = signingProps.getProperty("release.keyPassword")
+                storeFile = keyStore
+                storePassword = System.getenv("STORE_PASSWORD") ?: signProps.getProperty("release.storePassword")
+                keyAlias = System.getenv("KEY_ALIAS") ?: signProps.getProperty("release.keyAlias")
+                keyPassword = System.getenv("KEY_PASSWORD") ?: signProps.getProperty("release.keyPassword")
             }
         }
     }
@@ -75,20 +81,18 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
             proguardFiles(*customProguardRules.toList().toTypedArray())
         }
-        applicationVariants.forEach { variant ->
-            if (variant.buildType.name == "debug") {
-                variant.mergedFlavor.resourceConfigurations.clear()
-                variant.mergedFlavor.resourceConfigurations.add("en")
-                variant.mergedFlavor.resourceConfigurations.add("de")
-            } else if (variant.buildType.name != "debug") {
-                variant.outputs.forEach { output ->
-                    output as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+    }
 
-                    output.outputFileName = packageName +
-                            "-v${defaultConfig.versionName}(${defaultConfig.versionCode})" +
-                            "-${variant.buildType.name.toUpperCase()}-${lastCommitHash()}.apk"
-                }
-            }
+    buildOutputs.all {
+        val variantOutputImpl = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+        val variantName: String = variantOutputImpl.name
+
+        if (variantName == "release") {
+            val outputFileName = packageName +
+                    "-v${defaultConfig.versionName}(${defaultConfig.versionCode})" +
+                    "-${variantName.toUpperCase()}-${lastCommitHash()}.apk"
+
+            variantOutputImpl.outputFileName = outputFileName
         }
     }
 
