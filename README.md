@@ -16,3 +16,4 @@ Topics:
 * Bug reporting (bugsnag)
 
 Successor to: [V1](https://github.com/d4rken/android-kotlin-starter), [V2](https://github.com/d4rken/android-kotlin-starter-v2), V3 (unreleased)
+ 
