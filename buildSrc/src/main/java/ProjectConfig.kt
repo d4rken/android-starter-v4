@@ -3,7 +3,7 @@ import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import java.time.Instant
 
-object BuildConfig {
+object ProjectConfig {
     const val minSdk = 26
     const val compileSdk = 31
     const val targetSdk = 31
@@ -40,11 +40,11 @@ private fun LibraryExtension.kotlinOptions(configure: Action<org.jetbrains.kotli
     (this as org.gradle.api.plugins.ExtensionAware).extensions.configure("kotlinOptions", configure)
 
 fun LibraryExtension.setupLibraryDefaults() {
-    compileSdk = BuildConfig.compileSdk
+    compileSdk = ProjectConfig.compileSdk
 
     defaultConfig {
-        minSdk = BuildConfig.minSdk
-        targetSdk = BuildConfig.targetSdk
+        minSdk = ProjectConfig.minSdk
+        targetSdk = ProjectConfig.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
