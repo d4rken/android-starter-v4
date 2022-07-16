@@ -8,7 +8,17 @@ import eu.darken.androidstarter.BuildConfig
 object BuildConfigWrap {
     val APPLICATION_ID = BuildConfig.APPLICATION_ID
     val DEBUG: Boolean = BuildConfig.DEBUG
-    val BUILD_TYPE: String = BuildConfig.BUILD_TYPE
+    val BUILD_TYPE: BuildType = when (val typ = BuildConfig.BUILD_TYPE) {
+        "debug" -> BuildType.DEBUG
+        "release" -> BuildType.RELEASE
+        else -> throw IllegalArgumentException("Unknown buildtype: $typ")
+    }
+
+    enum class BuildType {
+        DEBUG,
+        RELEASE,
+        ;
+    }
 
     val VERSION_CODE: Long = BuildConfig.VERSION_CODE.toLong()
     val VERSION_NAME: String = BuildConfig.VERSION_NAME
