@@ -1,4 +1,4 @@
-name: Eval & test code
+name: Code tests & eval
 
 on:
   push:
