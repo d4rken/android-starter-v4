@@ -59,7 +59,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
       - name: Assemble release APK
-        if: !contains(steps.tagger.outputs.tag, '-beta')
+        if: "!contains(steps.tagger.outputs.tag, '-beta')"
         run: ./gradlew assembleRelease
         env:
           VERSION: ${{ github.ref }}
@@ -80,7 +80,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create release
-        if: !contains(steps.tagger.outputs.tag, '-beta')
+        if: "!contains(steps.tagger.outputs.tag, '-beta')"
         uses: softprops/action-gh-release@v1
         with:
           prerelease: false
