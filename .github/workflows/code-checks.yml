@@ -1,4 +1,4 @@
-name: Pull Request CI
+name: Eval & test code
 
 on:
   push:

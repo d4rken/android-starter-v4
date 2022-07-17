@@ -1,4 +1,4 @@
-name: Tag based release
+name: Create release for tag
 
 on:
   push:
