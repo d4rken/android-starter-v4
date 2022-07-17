@@ -64,6 +64,6 @@ jobs:
           name: ${{ steps.tagger.outputs.tag }}
           body: ${{ steps.github_release.outputs.changelog }}
           files: app/build/outputs/apk/release/*.apk
-          prerelease: contains(${{ steps.tagger.outputs.tag }},'beta')
+          prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
