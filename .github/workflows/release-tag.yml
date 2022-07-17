@@ -1,4 +1,4 @@
-name: Release - GitHub
+name: Tag based release
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - 'v*'
 
 jobs:
-  release:
-    name: Build tagged release
+  release-github:
+    name: Create GitHub release
     runs-on: ubuntu-latest
     environment: production
     steps:
