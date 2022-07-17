@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.androidstarter.R
+import eu.darken.androidstarter.common.BuildConfigWrap
 import eu.darken.androidstarter.common.lists.differ.update
 import eu.darken.androidstarter.common.lists.setupDefaults
 import eu.darken.androidstarter.common.navigation.doNavigate
@@ -38,6 +39,7 @@ class MainFragment : Fragment3(R.layout.main_fragment) {
                     else -> super.onOptionsItemSelected(it)
                 }
             }
+            subtitle = "Buildtype: ${BuildConfigWrap.BUILD_TYPE}"
         }
 
         ui.list.setupDefaults(someAdapter)

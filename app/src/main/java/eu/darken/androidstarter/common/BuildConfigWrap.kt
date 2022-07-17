@@ -9,13 +9,15 @@ object BuildConfigWrap {
     val APPLICATION_ID = BuildConfig.APPLICATION_ID
     val DEBUG: Boolean = BuildConfig.DEBUG
     val BUILD_TYPE: BuildType = when (val typ = BuildConfig.BUILD_TYPE) {
-        "debug" -> BuildType.DEBUG
+        "debug" -> BuildType.DEV
+        "beta" -> BuildType.BETA
         "release" -> BuildType.RELEASE
         else -> throw IllegalArgumentException("Unknown buildtype: $typ")
     }
 
     enum class BuildType {
-        DEBUG,
+        DEV,
+        BETA,
         RELEASE,
         ;
     }
