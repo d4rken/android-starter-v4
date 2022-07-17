@@ -69,7 +69,7 @@ jobs:
           tag_name: ${{ steps.tagger.outputs.tag }}
           name: ${{ steps.tagger.outputs.tag }}
           body: ${{ steps.github_release.outputs.changelog }}
-          files: app/build/outputs/apk/release/*.apk
           prerelease: ${{ env.BUILDTYPE_PRERELEASE }}
+          files: app/build/outputs/apk/release/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
