@@ -10,6 +10,14 @@
             android:data="https://darken.eu" />
     </Preference>
     <Preference
+        android:icon="@drawable/ic_github_onsurface"
+        android:summary="@string/issue_tracker_description"
+        android:title="@string/issue_tracker_label">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://github.com/d4rken/android-starter-v4" />
+    </Preference>
+    <Preference
         android:icon="@drawable/ic_email_onsurface"
         android:key="support.email.darken"
         android:title="@string/email_developer_label" />
