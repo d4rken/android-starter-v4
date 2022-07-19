@@ -34,6 +34,16 @@
             android:name="eu.darken.androidstarter.main.core.service.ExampleService"
             android:exported="false" />
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+
         <!-- Debug stuff-->
         <activity
             android:name=".common.debug.recording.ui.RecorderActivity"

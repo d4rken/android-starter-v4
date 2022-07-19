@@ -32,4 +32,7 @@
 
     <string name="support_installid_label">Install ID</string>
     <string name="support_installid_desc">Automatic error reports are anonymous. Share your install ID if the developer needs to find your error reports.</string>
+    <string name="support_debuglog_label">Debug log</string>
+    <string name="support_debuglog_desc">Record everything the app is doing into a text file that you can share.</string>
+    <string name="settings_support_label">Support</string>
 </resources>

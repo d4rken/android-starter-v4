@@ -29,6 +29,7 @@ class SupportFragment : PreferenceFragment2() {
 
     private val installIdPref by lazy { findPreference<Preference>("support.installid")!! }
     private val supportMailPref by lazy { findPreference<Preference>("support.email.darken")!! }
+    private val debugLogPref by lazy { findPreference<Preference>("support.debuglog")!! }
 
     override fun onPreferencesCreated() {
         installIdPref.setOnPreferenceClickListener {
@@ -39,7 +40,10 @@ class SupportFragment : PreferenceFragment2() {
             vm.sendSupportMail()
             true
         }
-
+        debugLogPref.setOnPreferenceClickListener {
+            vm.startDebugLog()
+            true
+        }
         super.onPreferencesCreated()
     }
 
@@ -53,6 +57,10 @@ class SupportFragment : PreferenceFragment2() {
         }
 
         vm.emailEvent.observe2(this) { startActivity(it) }
+
+        vm.isRecording.observe2(this) {
+            debugLogPref.isEnabled = !it
+        }
 
         super.onViewCreated(view, savedInstanceState)
     }

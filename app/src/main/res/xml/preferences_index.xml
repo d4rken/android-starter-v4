@@ -20,6 +20,12 @@
         </Preference>
 
         <Preference
+            android:icon="@drawable/ic_baseline_contact_support_24"
+            app:fragment="eu.darken.androidstarter.main.ui.settings.support.SupportFragment"
+            app:summary="¯\\_(ツ)_/¯"
+            app:title="@string/settings_support_label" />
+
+        <Preference
             android:icon="@drawable/ic_heart"
             app:fragment="eu.darken.androidstarter.main.ui.settings.acks.AcknowledgementsFragment"
             app:summary="@string/general_thank_you_label"

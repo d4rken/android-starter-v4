@@ -8,8 +8,11 @@ import eu.darken.androidstarter.common.BuildConfigWrap
 import eu.darken.androidstarter.common.EmailTool
 import eu.darken.androidstarter.common.InstallId
 import eu.darken.androidstarter.common.coroutine.DispatcherProvider
+import eu.darken.androidstarter.common.debug.logging.log
+import eu.darken.androidstarter.common.debug.recording.core.RecorderModule
 import eu.darken.androidstarter.common.livedata.SingleLiveEvent
 import eu.darken.androidstarter.common.uix.ViewModel3
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,10 +21,13 @@ class SupportFragmentVM @Inject constructor(
     private val emailTool: EmailTool,
     private val installId: InstallId,
     private val dispatcherProvider: DispatcherProvider,
+    private val recorderModule: RecorderModule,
 ) : ViewModel3(dispatcherProvider) {
 
     val emailEvent = SingleLiveEvent<Intent>()
     val clipboardEvent = SingleLiveEvent<String>()
+
+    val isRecording = recorderModule.state.map { it.isRecording }.asLiveData2()
 
     fun sendSupportMail() = launch {
 
@@ -45,5 +51,10 @@ class SupportFragmentVM @Inject constructor(
 
     fun copyInstallID() = launch {
         clipboardEvent.postValue(installId.id)
+    }
+
+    fun startDebugLog() = launch {
+        log { "startDebugLog()" }
+        recorderModule.startRecorder()
     }
 }
