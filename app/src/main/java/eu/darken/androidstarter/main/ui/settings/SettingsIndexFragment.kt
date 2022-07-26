@@ -6,6 +6,7 @@ import androidx.preference.Preference
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.androidstarter.R
 import eu.darken.androidstarter.common.BuildConfigWrap
+import eu.darken.androidstarter.common.PrivacyPolicy
 import eu.darken.androidstarter.common.WebpageTool
 import eu.darken.androidstarter.common.preferences.Settings
 import eu.darken.androidstarter.common.uix.PreferenceFragment2
@@ -35,7 +36,10 @@ class SettingsIndexFragment : PreferenceFragment2() {
 
     override fun onPreferencesCreated() {
         findPreference<Preference>("core.changelog")!!.summary = BuildConfigWrap.VERSION_DESCRIPTION
-
+        findPreference<Preference>("core.privacy")!!.setOnPreferenceClickListener {
+            webpageTool.open(PrivacyPolicy.URL)
+            true
+        }
         super.onPreferencesCreated()
     }
 }

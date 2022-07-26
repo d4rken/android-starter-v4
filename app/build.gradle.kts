@@ -1,6 +1,3 @@
-import java.io.FileInputStream
-import java.util.*
-
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -9,13 +6,10 @@ plugins {
 }
 apply(plugin = "dagger.hilt.android.plugin")
 apply(plugin = "androidx.navigation.safeargs.kotlin")
+apply(plugin = "com.bugsnag.android.gradle")
 
 android {
     val packageName = "eu.darken.androidstarter"
-
-    val bugsnagProps = Properties()
-    val bugsnagPropsFile = File(System.getProperty("user.home"), ".appconfig/${packageName}/bugsnag.properties")
-    if (bugsnagPropsFile.canRead()) bugsnagProps.load(FileInputStream(bugsnagPropsFile))
 
     compileSdk = ProjectConfig.compileSdk
 
@@ -33,32 +27,30 @@ android {
         buildConfigField("String", "GITSHA", "\"${lastCommitHash()}\"")
         buildConfigField("String", "BUILDTIME", "\"${buildTime()}\"")
 
-        manifestPlaceholders["bugsnagApiKey"] = "fake"
+        manifestPlaceholders["bugsnagApiKey"] = getBugSnagApiKey(
+            File(System.getProperty("user.home"), ".appconfig/${packageName}/bugsnag.properties")
+        ) ?: "fake"
     }
 
     signingConfigs {
         val basePath = File(System.getProperty("user.home"), ".appconfig/${packageName}")
-        create("release") {
-            setupCredentials(File(basePath, "signing.properties"))
+        create("releaseFoss") {
+            setupCredentials(File(basePath, "signing-foss.properties"))
+        }
+        create("releaseGplay") {
+            setupCredentials(File(basePath, "signing-gplay-upload.properties"))
         }
     }
 
-    val signProps = Properties().apply {
-        File(System.getProperty("user.home"), ".appconfig/${packageName}/signing.properties")
-            .takeIf { it.canRead() }
-            ?.let { load(FileInputStream(it)) }
-    }
-    val keyStore = System.getenv("STORE_PATH")?.let { File(it) }
-        ?: signProps.getProperty("release.storePath")?.let { File(it) }
-
-    if (keyStore != null) {
-        signingConfigs {
-            getByName("release") {
-                storeFile = keyStore
-                storePassword = System.getenv("STORE_PASSWORD") ?: signProps.getProperty("release.storePassword")
-                keyAlias = System.getenv("KEY_ALIAS") ?: signProps.getProperty("release.keyAlias")
-                keyPassword = System.getenv("KEY_PASSWORD") ?: signProps.getProperty("release.keyPassword")
-            }
+    flavorDimensions.add("version")
+    productFlavors {
+        create("foss") {
+            dimension = "version"
+            signingConfig = signingConfigs["releaseFoss"]
+        }
+        create("gplay") {
+            dimension = "version"
+            signingConfig = signingConfigs["releaseGplay"]
         }
     }
 
@@ -74,7 +66,6 @@ android {
             proguardFiles("proguard-rules-debug.pro")
         }
         create("beta") {
-            signingConfig = signingConfigs["release"]
             lint {
                 abortOnError = true
                 fatal.add("StopShip")
@@ -85,7 +76,6 @@ android {
             proguardFiles(*customProguardRules.toList().toTypedArray())
         }
         release {
-            signingConfig = signingConfigs["release"]
             lint {
                 abortOnError = true
                 fatal.add("StopShip")

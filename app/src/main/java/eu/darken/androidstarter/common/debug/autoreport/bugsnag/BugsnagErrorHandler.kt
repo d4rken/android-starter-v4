@@ -7,6 +7,7 @@ import com.bugsnag.android.Event
 import com.bugsnag.android.OnErrorCallback
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.androidstarter.BuildConfig
+import eu.darken.androidstarter.common.BuildConfigWrap
 import eu.darken.androidstarter.common.debug.autoreport.DebugSettings
 import eu.darken.androidstarter.common.debug.logging.Logging.Priority.WARN
 import eu.darken.androidstarter.common.debug.logging.asLog
@@ -25,8 +26,11 @@ class BugsnagErrorHandler @Inject constructor(
         bugsnagLogger.injectLog(event)
 
         TAB_APP.also { tab ->
-            event.addMetadata(tab, "gitSha", BuildConfig.GITSHA)
-            event.addMetadata(tab, "buildTime", BuildConfig.BUILDTIME)
+            event.addMetadata(tab, "flavor", BuildConfigWrap.FLAVOR.toString())
+            event.addMetadata(tab, "buildType", BuildConfigWrap.BUILD_TYPE.toString())
+
+            event.addMetadata(tab, "buildTime", BuildConfigWrap.BUILD_TIME.toString())
+            event.addMetadata(tab, "gitSha", BuildConfigWrap.GIT_SHA)
 
             context.tryFormattedSignature()?.let { event.addMetadata(tab, "signatures", it) }
         }

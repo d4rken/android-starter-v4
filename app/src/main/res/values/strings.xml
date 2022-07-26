@@ -19,6 +19,7 @@
     <string name="debug_debuglog_record_action">Record debug log</string>
 
     <string name="settings_privacy_policy_label">Privacy policy</string>
+    <string name="settings_privacy_policy_desc">Handling data responsibly.</string>
     <string name="settings_licenses_label">Licenses</string>
     <string name="general_thank_you_label">Thank you</string>
     <string name="settings_category_other_label">Other</string>

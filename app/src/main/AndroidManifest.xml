@@ -44,6 +44,10 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
+        <meta-data
+            android:name="com.bugsnag.android.API_KEY"
+            android:value="${bugsnagApiKey}" />
+
         <!-- Debug stuff-->
         <activity
             android:name=".common.debug.recording.ui.RecorderActivity"
