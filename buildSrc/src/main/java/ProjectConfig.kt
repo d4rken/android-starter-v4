@@ -1,7 +1,10 @@
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
+import java.io.File
+import java.io.FileInputStream
 import java.time.Instant
+import java.util.*
 
 object ProjectConfig {
     const val minSdk = 26
@@ -75,5 +78,34 @@ fun LibraryExtension.setupLibraryDefaults() {
 
     packagingOptions {
         resources.excludes += "DebugProbesKt.bin"
+    }
+}
+
+fun com.android.build.api.dsl.SigningConfig.setupCredentials(
+    signingPropsPath: File? = null
+) {
+
+    val keyStoreFromEnv = System.getenv("STORE_PATH")?.let { File(it) }
+
+    if (keyStoreFromEnv?.exists() == true) {
+        println("Using signing data from environment variables.")
+        storeFile = keyStoreFromEnv
+        storePassword = System.getenv("STORE_PASSWORD")
+        keyAlias = System.getenv("KEY_ALIAS")
+        keyPassword = System.getenv("KEY_PASSWORD")
+    } else {
+        println("Using signing data from properties file.")
+        val props = Properties().apply {
+            signingPropsPath?.takeIf { it.canRead() }?.let { load(FileInputStream(it)) }
+        }
+
+        val keyStorePath = props.getProperty("release.storePath")?.let { File(it) }
+
+        if (keyStorePath?.exists() == true) {
+            storeFile = keyStorePath
+            storePassword = props.getProperty("release.storePassword")
+            keyAlias = props.getProperty("release.keyAlias")
+            keyPassword = props.getProperty("release.keyPassword")
+        }
     }
 }

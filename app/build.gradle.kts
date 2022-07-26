@@ -37,7 +37,10 @@ android {
     }
 
     signingConfigs {
-        create("release") {}
+        val basePath = File(System.getProperty("user.home"), ".appconfig/${packageName}")
+        create("release") {
+            setupCredentials(File(basePath, "signing.properties"))
+        }
     }
 
     val signProps = Properties().apply {
