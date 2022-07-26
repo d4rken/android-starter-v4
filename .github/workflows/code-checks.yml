@@ -7,8 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
-    name: Build and test
+  test-foss:
+    name: Test FOSS flavor
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +22,29 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug
-      - name: Run tests
-        run: ./gradlew testDebugUnitTest
+
+      - name: Build FOSS variant
+        run: ./gradlew assembleFossDebug
+      - name: Test FOSS variant
+        run: ./gradlew testFossDebugUnitTest
+
+  test-gplay:
+    name: Test Google Play flavor
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Google Play variant
+        run: ./gradlew assembleGplayDebug
+      - name: Test Google Play variant
+        run: ./gradlew testGplayDebugUnitTest
