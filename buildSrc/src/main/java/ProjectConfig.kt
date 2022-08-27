@@ -7,6 +7,8 @@ import java.time.Instant
 import java.util.*
 
 object ProjectConfig {
+    const val packageName = "eu.darken.androidstarter"
+
     const val minSdk = 26
     const val compileSdk = 31
     const val targetSdk = 31
@@ -68,9 +70,9 @@ fun LibraryExtension.setupLibraryDefaults() {
     kotlinOptions {
         jvmTarget = "1.8"
         freeCompilerArgs = freeCompilerArgs + listOf(
-            "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-Xuse-experimental=kotlinx.coroutines.FlowPreview",
-            "-Xuse-experimental=kotlin.time.ExperimentalTime",
+            "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-Xopt-in=kotlinx.coroutines.FlowPreview",
+            "-Xopt-in=kotlin.time.ExperimentalTime",
             "-Xopt-in=kotlin.RequiresOptIn"
         )
     }
