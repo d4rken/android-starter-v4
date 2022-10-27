@@ -46,7 +46,7 @@ jobs:
         env:
           VERSION: ${{ github.ref }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          KEY_ALIAS: release
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           BUGSNAG_API_KEY: ${{ secrets.BUGSNAG_API_KEY }}
 
@@ -56,7 +56,7 @@ jobs:
         env:
           VERSION: ${{ github.ref }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          KEY_ALIAS: release
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           BUGSNAG_API_KEY: ${{ secrets.BUGSNAG_API_KEY }}
 
