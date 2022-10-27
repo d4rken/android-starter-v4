@@ -416,7 +416,7 @@ do-push() {
   [yY][eE][sS] | [yY])
     echo -e "\n${S_NOTICE}Pushing files + tags to <${S_NORM}${PUSH_DEST}${S_NOTICE}>..."
     PUSH_MSG=$(git push "${PUSH_DEST}" v"$V_NAME" 2>&1) # Push new tag
-    if [ "$FLAG_NOBRANCH" = false ]; then
+    if [ "$FLAG_NOBRANCH" != true ]; then
       PUSH_MSG+="\n"
       PUSH_MSG+=$(git push -u "${PUSH_DEST}" "${REL_PREFIX}${V_NAME}" 2>&1) # Push new tag
     fi
