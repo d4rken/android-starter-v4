@@ -288,7 +288,7 @@ check-tag-exists() {
 
 # $1 : version
 # $2 : release note
-tag() {
+create-tag() {
   if [ -z "$2" ]; then
     # Default release note
     git tag -a "v$1" -m "Tag version $1."
@@ -318,17 +318,21 @@ do-version-properties() {
     CURRENT_LINE=$((CURRENT_LINE + 1))
 
     if [[ $line =~ $V_MAJOR_REGEX ]]; then
-      echo "Found major, new value: $line"
-      PROPS_FILE_NEW+="${BASH_REMATCH[1]}=${V_MAJOR}"
+      updated="${BASH_REMATCH[1]}=${V_MAJOR}"
+      echo "Found major, replacing: $line -> $updated"
+      PROPS_FILE_NEW+=$updated
     elif [[ $line =~ $V_MINOR_REGEX ]]; then
-      echo "Found minor, new value: $line"
-      PROPS_FILE_NEW+="${BASH_REMATCH[1]}=${V_MINOR}"
+      updated="${BASH_REMATCH[1]}=${V_MINOR}"
+      echo "Found minor, replacing: $line -> $updated"
+      PROPS_FILE_NEW+=$updated
     elif [[ $line =~ $V_PATCH_REGEX ]]; then
-      echo "Found patch, new value: $line"
-      PROPS_FILE_NEW+="${BASH_REMATCH[1]}=${V_PATCH}"
+      updated="${BASH_REMATCH[1]}=${V_PATCH}"
+      echo "Found patch, replacing: $line -> $updated"
+      PROPS_FILE_NEW+=$updated
     elif [[ $line =~ $V_BUILD_REGEX ]]; then
-      echo "Found build, new value: $line"
-      PROPS_FILE_NEW+="${BASH_REMATCH[1]}=${V_BUILD_COUNTER}"
+      updated="${BASH_REMATCH[1]}=${V_BUILD_COUNTER}"
+      echo "Found build, replacing: $line -> $updated"
+      PROPS_FILE_NEW+=$updated
     else
       PROPS_FILE_NEW+="$line"
     fi
@@ -443,7 +447,7 @@ do-version-properties
 do-versionfile
 do-branch
 do-commit
-tag "v${V_NAME}" "${REL_NOTE}"
+create-tag "${V_NAME}" "${REL_NOTE}"
 do-push
 
 echo -e "\n${S_LIGHT}––––––"
