@@ -14,13 +14,16 @@ object ProjectConfig {
     const val targetSdk = 31
 
     object Version {
-        const val major = 4
-        const val minor = 5
-        const val patch = 1
-        const val build = 1
+        val versionProperties = Properties().apply {
+            load(FileInputStream(File("version.properties")))
+        }
+        val major = versionProperties.getProperty("project.versioning.major").toInt()
+        val minor = versionProperties.getProperty("project.versioning.minor").toInt()
+        val patch = versionProperties.getProperty("project.versioning.patch").toInt()
+        val build = versionProperties.getProperty("project.versioning.build").toInt()
 
-        const val name = "${major}.${minor}.${patch}-rc${build}"
-        const val code = major * 1000000 + minor * 10000 + patch * 100 + build
+        val name = "${major}.${minor}.${patch}-rc${build}"
+        val code = major * 10000000 + minor * 100000 + patch * 1000 + build * 10
     }
 }
 
