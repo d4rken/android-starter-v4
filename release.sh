@@ -114,7 +114,7 @@ SCRIPT_VER="1.0"
 
 GIT_MSG="Release: "
 REL_NOTE=""
-REL_PREFIX="chore/release-"
+REL_PREFIX="release/"
 PUSH_DEST="origin"
 
 # Show credits & help
@@ -415,8 +415,8 @@ do-push() {
   case "$CONFIRM" in
   [yY][eE][sS] | [yY])
     echo -e "\n${S_NOTICE}Pushing files + tags to <${S_NORM}${PUSH_DEST}${S_NOTICE}>..."
-    #PUSH_MSG=$(git push "${PUSH_DEST}" v"$V_NAME" 2>&1) # Push new tag
-    PUSH_MSG=$(git pull "${PUSH_DEST}" v"$V_NAME" 2>&1) # Push new tag
+    PUSH_MSG=$(git push "${PUSH_DEST}" v"$V_NAME" 2>&1) # Push new tag
+    PUSH_MSG+=$(git push -u "${PUSH_DEST}" "${REL_PREFIX}${V_NAME}" 2>&1) # Push new tag
     if [ ! "$?" -eq 0 ]; then
       echo -e "\n${I_STOP} ${S_WARN}Warning\n$PUSH_MSG"
       # exit 1
