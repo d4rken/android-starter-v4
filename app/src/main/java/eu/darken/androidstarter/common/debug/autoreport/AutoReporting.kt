@@ -5,6 +5,7 @@ import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.androidstarter.common.InstallId
+import eu.darken.androidstarter.common.datastore.valueBlocking
 import eu.darken.androidstarter.common.debug.Bugs
 import eu.darken.androidstarter.common.debug.autoreport.bugsnag.BugsnagErrorHandler
 import eu.darken.androidstarter.common.debug.autoreport.bugsnag.BugsnagLogger
@@ -27,12 +28,12 @@ class AutoReporting @Inject constructor(
 ) {
 
     fun setup() {
-        val isEnabled = bugReportSettings.isAutoReportingEnabled.value
+        val isEnabled = bugReportSettings.isAutoReportingEnabled.flow
         log(TAG) { "setup(): isEnabled=$isEnabled" }
 
         try {
             val bugsnagConfig = Configuration.load(context).apply {
-                if (bugReportSettings.isAutoReportingEnabled.value) {
+                if (bugReportSettings.isAutoReportingEnabled.valueBlocking) {
                     Logging.install(bugsnagLogger.get())
                     setUser(installId.id, null, null)
                     autoTrackSessions = true

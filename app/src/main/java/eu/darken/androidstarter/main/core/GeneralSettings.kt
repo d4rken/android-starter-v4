@@ -1,27 +1,35 @@
 package eu.darken.androidstarter.main.core
 
 import android.content.Context
-import android.content.SharedPreferences
-import androidx.preference.PreferenceDataStore
+import android.os.Build
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import eu.darken.androidstarter.common.datastore.PreferenceScreenData
+import eu.darken.androidstarter.common.datastore.PreferenceStoreMapper
+import eu.darken.androidstarter.common.datastore.createValue
+import eu.darken.androidstarter.common.debug.autoreport.DebugSettings
 import eu.darken.androidstarter.common.debug.logging.logTag
-import eu.darken.androidstarter.common.preferences.PreferenceStoreMapper
-import eu.darken.androidstarter.common.preferences.Settings
-import eu.darken.androidstarter.common.preferences.createFlowPreference
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class GeneralSettings @Inject constructor(
-    @ApplicationContext private val context: Context
-) : Settings() {
+    @ApplicationContext private val context: Context,
+    private val debugSettings: DebugSettings,
+) : PreferenceScreenData {
 
-    override val preferences: SharedPreferences = context.getSharedPreferences("settings_core", Context.MODE_PRIVATE)
+    private val Context.dataStore by preferencesDataStore(name = "settings_core")
 
-    val isBugTrackingEnabled = preferences.createFlowPreference("core.bugtracking.enabled", true)
+    override val dataStore: DataStore<Preferences>
+        get() = context.dataStore
 
-    override val preferenceDataStore: PreferenceDataStore = PreferenceStoreMapper(
-        isBugTrackingEnabled
+    val deviceLabel = dataStore.createValue("core.device.label", Build.DEVICE)
+
+    override val mapper = PreferenceStoreMapper(
+        debugSettings.isAutoReportingEnabled,
+        deviceLabel
     )
 
     companion object {

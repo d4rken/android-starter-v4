@@ -8,7 +8,7 @@ import eu.darken.androidstarter.R
 import eu.darken.androidstarter.common.BuildConfigWrap
 import eu.darken.androidstarter.common.PrivacyPolicy
 import eu.darken.androidstarter.common.WebpageTool
-import eu.darken.androidstarter.common.preferences.Settings
+import eu.darken.androidstarter.common.datastore.PreferenceScreenData
 import eu.darken.androidstarter.common.uix.PreferenceFragment2
 import eu.darken.androidstarter.main.core.GeneralSettings
 import javax.inject.Inject
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class SettingsIndexFragment : PreferenceFragment2() {
 
     @Inject lateinit var generalSettings: GeneralSettings
-    override val settings: Settings
+    override val settings: PreferenceScreenData
         get() = generalSettings
     override val preferenceFile: Int = R.xml.preferences_index
 
