@@ -22,8 +22,11 @@ android {
 
         testInstrumentationRunner = "eu.darken.androidstarter.HiltTestRunner"
 
+        buildConfigField("String", "PACKAGENAME", "\"${ProjectConfig.packageName}\"")
         buildConfigField("String", "GITSHA", "\"${lastCommitHash()}\"")
         buildConfigField("String", "BUILDTIME", "\"${buildTime()}\"")
+        buildConfigField("String", "VERSION_CODE", "\"${ProjectConfig.Version.code}\"")
+        buildConfigField("String", "VERSION_NAME", "\"${ProjectConfig.Version.name}\"")
 
         manifestPlaceholders["bugsnagApiKey"] = getBugSnagApiKey(
             File(System.getProperty("user.home"), ".appconfig/${ProjectConfig.packageName}/bugsnag.properties")
@@ -140,8 +143,7 @@ android {
 }
 
 dependencies {
-    // https://developer.android.com/studio/write/java8-support
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.Desugar.core}")
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${Versions.Kotlin.core}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlin.coroutines}")
