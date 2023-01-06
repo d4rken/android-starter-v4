@@ -5,10 +5,13 @@ import android.view.View
 import androidx.annotation.Keep
 import androidx.fragment.app.viewModels
 import androidx.preference.Preference
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.androidstarter.R
 import eu.darken.androidstarter.common.ClipboardHelper
+import eu.darken.androidstarter.common.PrivacyPolicy
+import eu.darken.androidstarter.common.WebpageTool
 import eu.darken.androidstarter.common.observe2
 import eu.darken.androidstarter.common.uix.PreferenceFragment2
 import eu.darken.androidstarter.main.core.GeneralSettings
@@ -26,6 +29,7 @@ class SupportFragment : PreferenceFragment2() {
     override val settings: GeneralSettings by lazy { generalSettings }
 
     @Inject lateinit var clipboardHelper: ClipboardHelper
+    @Inject lateinit var webpageTool: WebpageTool
 
     private val installIdPref by lazy { findPreference<Preference>("support.installid")!! }
     private val supportMailPref by lazy { findPreference<Preference>("support.email.darken")!! }
@@ -41,7 +45,13 @@ class SupportFragment : PreferenceFragment2() {
             true
         }
         debugLogPref.setOnPreferenceClickListener {
-            vm.startDebugLog()
+            MaterialAlertDialogBuilder(requireContext()).apply {
+                setTitle(R.string.support_debuglog_label)
+                setMessage(R.string.settings_debuglog_explanation)
+                setPositiveButton(R.string.general_continue_action) { _, _ -> vm.startDebugLog() }
+                setNegativeButton(R.string.general_cancel_action) { _, _ -> }
+                setNeutralButton(R.string.settings_privacy_policy_label) { _, _ -> webpageTool.open(PrivacyPolicy.URL) }
+            }.show()
             true
         }
         super.onPreferencesCreated()
