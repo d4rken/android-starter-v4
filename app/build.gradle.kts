@@ -210,6 +210,8 @@ dependencies {
 
     implementation("androidx.work:work-runtime:${Versions.AndroidX.WorkManager.core}")
     testImplementation("androidx.work:work-testing:${Versions.AndroidX.WorkManager.core}")
+    implementation("androidx.work:work-runtime-ktx:${Versions.AndroidX.WorkManager.core}")
+    implementation("androidx.hilt:hilt-work:1.0.0")
 
     // UI
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")

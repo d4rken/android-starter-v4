@@ -10,7 +10,6 @@ import eu.darken.androidstarter.common.BuildConfigWrap
 import eu.darken.androidstarter.common.lists.differ.update
 import eu.darken.androidstarter.common.lists.setupDefaults
 import eu.darken.androidstarter.common.navigation.doNavigate
-import eu.darken.androidstarter.common.observe2
 import eu.darken.androidstarter.common.uix.Fragment3
 import eu.darken.androidstarter.common.viewbinding.viewBinding
 import eu.darken.androidstarter.databinding.MainFragmentBinding
@@ -44,7 +43,7 @@ class MainFragment : Fragment3(R.layout.main_fragment) {
 
         ui.list.setupDefaults(someAdapter)
 
-        vm.listItems.observe2(this@MainFragment, ui) {
+        vm.listItems.observe2(ui) {
             someAdapter.update(it)
         }
 

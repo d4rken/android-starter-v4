@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="eu.darken.androidstarter">
 
     <application
@@ -12,8 +13,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="eu.darken.androidstarter.main.ui.MainActivity"
-            android:exported="true"
-            android:label="@string/app_name">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,6 +33,11 @@
         <service
             android:name="eu.darken.androidstarter.main.core.service.ExampleService"
             android:exported="false" />
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
