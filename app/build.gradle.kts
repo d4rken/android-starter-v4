@@ -213,6 +213,13 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:${Versions.AndroidX.WorkManager.core}")
     implementation("androidx.hilt:hilt-work:1.0.0")
 
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
+    implementation("net.swiftzer.semver:semver:1.2.0")
+
     // UI
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.android.material:material:1.5.0-rc01")

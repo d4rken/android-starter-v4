@@ -1,6 +1,7 @@
-package eu.darken.androidstarter.main.ui.main
+package eu.darken.androidstarter.main.ui.dashboard
 
 import androidx.lifecycle.SavedStateHandle
+import eu.darken.androidstarter.common.github.GithubReleaseCheck
 import eu.darken.androidstarter.main.core.SomeRepo
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -18,6 +19,7 @@ import testhelper.livedata.InstantExecutorExtension
 class ExampleFragmentVDCTest : BaseTest() {
 
     @MockK lateinit var someRepo: SomeRepo
+    @MockK lateinit var githubReleaseCheck: GithubReleaseCheck
     @MockK(relaxUnitFun = true) lateinit var savedStateHandle: SavedStateHandle
 
     private val alwaysFlow = MutableStateFlow(0L)
@@ -39,10 +41,11 @@ class ExampleFragmentVDCTest : BaseTest() {
         }
     }
 
-    private fun createInstance() = MainFragmentVM(
+    private fun createInstance() = DashboardFragmentVM(
         handle = savedStateHandle,
         dispatcherProvider = TestDispatcherProvider(),
         someRepo = someRepo,
+        githubReleaseCheck = githubReleaseCheck,
     )
 
     @Test

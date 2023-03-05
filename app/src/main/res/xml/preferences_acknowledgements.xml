@@ -15,6 +15,15 @@
                 android:data="https://github.com/bugsnag/bugsnag-android" />
         </Preference>
         <Preference
+            android:key="license.semver"
+            android:summary="Kotlin data class for Semantic Versioning 2.0.0 specification (SemVer) (MIT)"
+            android:title="SemVer"
+            app:iconSpaceReserved="false">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/swiftzer/semver" />
+        </Preference>
+        <Preference
             android:key="license.materialdesignicons"
             android:summary="materialdesignicons.com (SIL Open Font License 1.1 / Attribution 4.0 International)"
             android:title="Material Design Icons"

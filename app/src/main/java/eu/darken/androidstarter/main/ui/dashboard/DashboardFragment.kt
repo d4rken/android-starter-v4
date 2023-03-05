@@ -1,5 +1,7 @@
-package eu.darken.androidstarter.main.ui.main
+package eu.darken.androidstarter.main.ui.dashboard
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -16,9 +18,9 @@ import eu.darken.androidstarter.databinding.MainFragmentBinding
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainFragment : Fragment3(R.layout.main_fragment) {
+class DashboardFragment : Fragment3(R.layout.main_fragment) {
 
-    override val vm: MainFragmentVM by viewModels()
+    override val vm: DashboardFragmentVM by viewModels()
     override val ui: MainFragmentBinding by viewBinding()
 
     @Inject lateinit var someAdapter: SomeAdapter
@@ -27,12 +29,8 @@ class MainFragment : Fragment3(R.layout.main_fragment) {
         ui.toolbar.apply {
             setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.action_help -> {
-                        Snackbar.make(requireView(), R.string.app_name, Snackbar.LENGTH_SHORT).show()
-                        true
-                    }
                     R.id.action_settings -> {
-                        doNavigate(MainFragmentDirections.actionExampleFragmentToSettingsContainerFragment())
+                        doNavigate(DashboardFragmentDirections.actionExampleFragmentToSettingsContainerFragment())
                         true
                     }
                     else -> super.onOptionsItemSelected(it)
@@ -45,6 +43,22 @@ class MainFragment : Fragment3(R.layout.main_fragment) {
 
         vm.listItems.observe2(ui) {
             someAdapter.update(it)
+        }
+
+        vm.newRelease.observe2(ui) { release ->
+            Snackbar
+                .make(
+                    requireView(),
+                    "New release available",
+                    Snackbar.LENGTH_LONG
+                )
+                .setAction("Show") {
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse(release.htmlUrl)
+                    }
+                    requireActivity().startActivity(intent)
+                }
+                .show()
         }
 
         super.onViewCreated(view, savedInstanceState)

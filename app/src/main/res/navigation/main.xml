@@ -6,7 +6,7 @@
     app:startDestination="@id/exampleFragment">
     <fragment
         android:id="@+id/exampleFragment"
-        android:name="eu.darken.androidstarter.main.ui.main.MainFragment"
+        android:name="eu.darken.androidstarter.main.ui.dashboard.DashboardFragment"
         tools:layout="@layout/main_fragment">
         <argument
             android:name="exampleArgument"

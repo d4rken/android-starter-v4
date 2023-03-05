@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.main.ui.main
+package eu.darken.androidstarter.main.ui.dashboard
 
 import android.view.ViewGroup
 import eu.darken.androidstarter.R

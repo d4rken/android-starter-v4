@@ -14,6 +14,7 @@ class SerializationModule {
     @Provides
     @Singleton
     fun moshi(): Moshi = Moshi.Builder().apply {
-
+        add(OffsetDateTimeAdapter())
+        add(SemVerAdapter())
     }.build()
 }
