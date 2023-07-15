@@ -140,6 +140,7 @@ android {
             assets.srcDirs(files("$projectDir/schemas"))
         }
     }
+    namespace = "eu.darken.androidstarter"
 }
 
 dependencies {

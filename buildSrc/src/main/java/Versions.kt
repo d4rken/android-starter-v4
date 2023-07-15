@@ -1,8 +1,4 @@
 object Versions {
-    object Gradle {
-        const val buildTools = "7.2.1"
-    }
-
     object Kotlin {
         const val core = "1.6.10"
         const val coroutines = "1.6.0"
@@ -20,7 +16,7 @@ object Versions {
         const val core = ""
 
         object Navigation {
-            const val core = "2.3.5"
+            const val core = "2.6.0"
         }
 
         object WorkManager {
