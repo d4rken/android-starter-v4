@@ -7,6 +7,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.androidstarter.R
 import eu.darken.androidstarter.common.debug.recorder.core.RecorderModule
 import eu.darken.androidstarter.common.navigation.findNavController
+import eu.darken.androidstarter.common.theming.Theming
 import eu.darken.androidstarter.common.uix.Activity2
 import eu.darken.androidstarter.databinding.MainActivityBinding
 import javax.inject.Inject
@@ -16,6 +17,7 @@ class MainActivity : Activity2() {
 
     private val vm: MainActivityVM by viewModels()
     private lateinit var ui: MainActivityBinding
+    @Inject lateinit var theming: Theming
     private val navController by lazy { supportFragmentManager.findNavController(R.id.nav_host) }
 
     var showSplashScreen = true
@@ -26,6 +28,7 @@ class MainActivity : Activity2() {
         super.onCreate(savedInstanceState)
 
         val splashScreen = installSplashScreen()
+        theming.notifySplashScreenDone(this)
         splashScreen.setKeepOnScreenCondition { showSplashScreen && savedInstanceState == null }
 
         ui = MainActivityBinding.inflate(layoutInflater)

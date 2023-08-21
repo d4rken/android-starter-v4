@@ -68,7 +68,7 @@ class RecorderService : Service2() {
             setChannelId(NOTIF_CHANID_DEBUG)
             setContentIntent(openPi)
             priority = NotificationCompat.PRIORITY_MAX
-            setSmallIcon(R.drawable.ic_baseline_bug_report_24)
+            setSmallIcon(R.drawable.ic_bug_report_24)
             setContentText(getString(R.string.debug_debuglog_recording_progress))
             setContentTitle(getString(R.string.app_name))
             setOngoing(true)
