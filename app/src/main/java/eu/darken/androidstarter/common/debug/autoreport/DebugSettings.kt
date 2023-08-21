@@ -5,8 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
-import eu.darken.androidstarter.common.datastore.PreferenceScreenData
-import eu.darken.androidstarter.common.datastore.PreferenceStoreMapper
+import eu.darken.androidstarter.common.BuildConfigWrap
 import eu.darken.androidstarter.common.datastore.createValue
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,17 +13,17 @@ import javax.inject.Singleton
 @Singleton
 class DebugSettings @Inject constructor(
     @ApplicationContext private val context: Context,
-) : PreferenceScreenData {
+) {
 
     private val Context.dataStore by preferencesDataStore(name = "debug_settings")
 
-    override val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>
         get() = context.dataStore
 
-    val isAutoReportingEnabled = dataStore.createValue("debug.bugreport.automatic.enabled", true)
+    val isDebugMode = dataStore.createValue("debug.enabled", BuildConfigWrap.DEBUG)
+    val isTraceMode = dataStore.createValue("debug.trace.enabled", false)
+    val isDryRunMode = dataStore.createValue("debug.dryrun.enabled", false)
 
-    override val mapper = PreferenceStoreMapper(
-        isAutoReportingEnabled,
-    )
+    val recorderPath = dataStore.createValue<String?>("recorder.log.path", null)
 
 }

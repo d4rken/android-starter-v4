@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name="eu.darken.androidstarter.App"
         android:allowBackup="true"
@@ -54,10 +56,10 @@
 
         <!-- Debug stuff-->
         <activity
-            android:name=".common.debug.recording.ui.RecorderActivity"
+            android:name=".common.debug.recorder.ui.RecorderActivity"
             android:theme="@style/AppThemeFloating" />
 
-        <service android:name=".common.debug.recording.core.RecorderService" />
+        <service android:name=".common.debug.recorder.core.RecorderService" />
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.debug.recording.ui
+package eu.darken.androidstarter.common.debug.recorder.ui
 
 import android.content.Context
 import android.content.Intent
@@ -14,25 +14,30 @@ import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.androidstarter.common.debug.logging.logTag
 import eu.darken.androidstarter.common.error.asErrorDialogBuilder
 import eu.darken.androidstarter.common.uix.Activity2
-import eu.darken.androidstarter.databinding.DebugRecordingActivityBinding
+import eu.darken.androidstarter.databinding.DebugRecorderActivityBinding
 
 @AndroidEntryPoint
 class RecorderActivity : Activity2() {
 
-    private lateinit var ui: DebugRecordingActivityBinding
-    private val vm: RecorderActivityVM by viewModels()
+    private lateinit var ui: DebugRecorderActivityBinding
+    private val vm: RecorderViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ui = DebugRecordingActivityBinding.inflate(layoutInflater)
+        if (intent.getStringExtra(RECORD_PATH) == null) {
+            finish()
+            return
+        }
+
+        ui = DebugRecorderActivityBinding.inflate(layoutInflater)
         setContentView(ui.root)
 
         vm.state.observe2 { state ->
             ui.loadingIndicator.isInvisible = !state.loading
             ui.shareAction.isInvisible = state.loading
 
-            ui.recordingPath.text = state.normalPath
+            ui.recordingPath.text = state.normalPath?.path
 
             if (state.normalSize != -1L) {
                 ui.recordingSize.text = Formatter.formatShortFileSize(this, state.normalSize)

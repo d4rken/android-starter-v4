@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.debug.recording.ui
+package eu.darken.androidstarter.common.debug.recorder.ui
 
 
 import android.content.Context
@@ -13,13 +13,18 @@ import eu.darken.androidstarter.common.PrivacyPolicy
 import eu.darken.androidstarter.common.WebpageTool
 import eu.darken.androidstarter.common.compression.Zipper
 import eu.darken.androidstarter.common.coroutine.DispatcherProvider
+import eu.darken.androidstarter.common.debug.logging.Logging.Priority.ERROR
+import eu.darken.androidstarter.common.debug.logging.asLog
+import eu.darken.androidstarter.common.debug.logging.log
 import eu.darken.androidstarter.common.debug.logging.logTag
 import eu.darken.androidstarter.common.flow.DynamicStateFlow
+import eu.darken.androidstarter.common.flow.combine
 import eu.darken.androidstarter.common.flow.onError
 import eu.darken.androidstarter.common.flow.replayingShare
 import eu.darken.androidstarter.common.livedata.SingleLiveEvent
 import eu.darken.androidstarter.common.uix.ViewModel3
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -28,7 +33,7 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class RecorderActivityVM @Inject constructor(
+class RecorderViewModel @Inject constructor(
     handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
@@ -37,16 +42,45 @@ class RecorderActivityVM @Inject constructor(
 
     private val recordedPath = handle.get<String>(RecorderActivity.RECORD_PATH)!!
     private val pathCache = MutableStateFlow(recordedPath)
-    private val resultCacheObs = pathCache
-        .map { path -> Pair(path, File(path).length()) }
+
+    data class LogData(
+        val file: File,
+        val size: Long,
+    )
+
+    private val logObsDefault = pathCache
+        .map { File(it) }
+        .map { LogData(it, it.length()) }
+        .catch { log(TAG, ERROR) { "Failed to get default log size: ${it.asLog()}" } }
         .replayingShare(vmScope)
 
-    private val resultCacheCompressedObs = resultCacheObs
-        .map { uncompressed ->
-            val zipped = "${uncompressed.first}.zip"
-            Zipper().zip(arrayOf(uncompressed.first), zipped)
-            Pair(zipped, File(zipped).length())
-        }
+    private val logObsShizuku = pathCache
+        .map { File(it + "_shizuku") }
+        .map { if (it.exists()) LogData(it, it.length()) else null }
+        .catch { log(TAG, ERROR) { "Failed to get Shizuku log size: ${it.asLog()}" } }
+        .replayingShare(vmScope)
+
+    private val logObsRoot = pathCache
+        .map { File(it + "_root") }
+        .map { if (it.exists()) LogData(it, it.length()) else null }
+        .catch { log(TAG, ERROR) { "Failed to get root log size: ${it.asLog()}" } }
+        .replayingShare(vmScope)
+
+    private val resultCacheCompressedObs = combine(
+        logObsDefault,
+        logObsShizuku,
+        logObsRoot,
+    ) { default, shizuku, root ->
+        val zipContent = listOfNotNull(
+            default.file.path,
+            shizuku?.file?.path,
+            root?.file?.path
+        )
+        val zipFile = File("${default.file.path}.zip")
+        Zipper().zip(zipContent, zipFile.path)
+        zipFile to zipFile.length()
+    }
+        .catch { log(TAG, ERROR) { "Failed to compress log: ${it.asLog()}" } }
         .replayingShare(vmScope + dispatcherProvider.IO)
 
     private val stater = DynamicStateFlow(TAG, vmScope) { State() }
@@ -55,7 +89,7 @@ class RecorderActivityVM @Inject constructor(
     val shareEvent = SingleLiveEvent<Intent>()
 
     init {
-        resultCacheObs
+        logObsDefault
             .onEach { (path, size) ->
                 stater.updateBlocking { copy(normalPath = path, normalSize = size) }
             }
@@ -77,13 +111,13 @@ class RecorderActivityVM @Inject constructor(
     }
 
     fun share() = launch {
-        val (path, size) = resultCacheCompressedObs.first()
+        val (file, size) = resultCacheCompressedObs.first()
 
         val intent = Intent(Intent.ACTION_SEND).apply {
             val uri = FileProvider.getUriForFile(
                 context,
                 BuildConfigWrap.APPLICATION_ID + ".provider",
-                File(path)
+                file
             )
 
             putExtra(Intent.EXTRA_STREAM, uri)
@@ -110,14 +144,14 @@ class RecorderActivityVM @Inject constructor(
     }
 
     data class State(
-        val normalPath: String? = null,
+        val normalPath: File? = null,
         val normalSize: Long = -1L,
-        val compressedPath: String? = null,
+        val compressedPath: File? = null,
         val compressedSize: Long = -1L,
         val loading: Boolean = true
     )
 
     companion object {
-        private val TAG = logTag("Debug", "eu.darken.androidstarter.common.debug.recording.core.Recorder", "VM")
+        private val TAG = logTag("Debug", "Recorder", "ViewModel")
     }
 }

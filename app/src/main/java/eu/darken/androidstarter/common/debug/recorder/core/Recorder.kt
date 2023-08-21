@@ -1,4 +1,4 @@
-package eu.darken.androidstarter.common.debug.recording.core
+package eu.darken.androidstarter.common.debug.recorder.core
 
 import eu.darken.androidstarter.common.debug.logging.FileLogger
 import eu.darken.androidstarter.common.debug.logging.Logging
@@ -42,7 +42,7 @@ class Recorder @Inject constructor() {
     }
 
     companion object {
-        internal val TAG = logTag("Debug", "Log", "eu.darken.androidstarter.common.debug.recording.core.Recorder")
+        internal val TAG = logTag("Debug", "Log", "Recorder")
     }
 
 }

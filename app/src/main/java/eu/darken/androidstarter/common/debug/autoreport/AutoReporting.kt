@@ -13,6 +13,7 @@ import eu.darken.androidstarter.common.debug.autoreport.bugsnag.NOPBugsnagErrorH
 import eu.darken.androidstarter.common.debug.logging.Logging
 import eu.darken.androidstarter.common.debug.logging.log
 import eu.darken.androidstarter.common.debug.logging.logTag
+import eu.darken.androidstarter.main.core.GeneralSettings
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -20,7 +21,7 @@ import javax.inject.Singleton
 @Singleton
 class AutoReporting @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val bugReportSettings: DebugSettings,
+    private val generalSettings: GeneralSettings,
     private val installId: InstallId,
     private val bugsnagLogger: Provider<BugsnagLogger>,
     private val bugsnagErrorHandler: Provider<BugsnagErrorHandler>,
@@ -28,12 +29,12 @@ class AutoReporting @Inject constructor(
 ) {
 
     fun setup() {
-        val isEnabled = bugReportSettings.isAutoReportingEnabled.flow
+        val isEnabled = generalSettings.isAutoReportingEnabled.flow
         log(TAG) { "setup(): isEnabled=$isEnabled" }
 
         try {
             val bugsnagConfig = Configuration.load(context).apply {
-                if (bugReportSettings.isAutoReportingEnabled.valueBlocking) {
+                if (generalSettings.isAutoReportingEnabled.valueBlocking) {
                     Logging.install(bugsnagLogger.get())
                     setUser(installId.id, null, null)
                     autoTrackSessions = true

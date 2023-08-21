@@ -5,13 +5,12 @@ import android.view.View
 import androidx.annotation.Keep
 import androidx.fragment.app.viewModels
 import androidx.preference.Preference
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import eu.darken.androidstarter.R
 import eu.darken.androidstarter.common.ClipboardHelper
-import eu.darken.androidstarter.common.PrivacyPolicy
 import eu.darken.androidstarter.common.WebpageTool
+import eu.darken.androidstarter.common.debug.recorder.ui.RecorderConsentDialog
 import eu.darken.androidstarter.common.observe2
 import eu.darken.androidstarter.common.uix.PreferenceFragment2
 import eu.darken.androidstarter.main.core.GeneralSettings
@@ -21,7 +20,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SupportFragment : PreferenceFragment2() {
 
-    private val vm: SupportFragmentVM by viewModels()
+    private val vm: SupportViewModel by viewModels()
 
     override val preferenceFile: Int = R.xml.preferences_support
     @Inject lateinit var generalSettings: GeneralSettings
@@ -32,26 +31,11 @@ class SupportFragment : PreferenceFragment2() {
     @Inject lateinit var webpageTool: WebpageTool
 
     private val installIdPref by lazy { findPreference<Preference>("support.installid")!! }
-    private val supportMailPref by lazy { findPreference<Preference>("support.email.darken")!! }
     private val debugLogPref by lazy { findPreference<Preference>("support.debuglog")!! }
 
     override fun onPreferencesCreated() {
         installIdPref.setOnPreferenceClickListener {
             vm.copyInstallID()
-            true
-        }
-        supportMailPref.setOnPreferenceClickListener {
-            vm.sendSupportMail()
-            true
-        }
-        debugLogPref.setOnPreferenceClickListener {
-            MaterialAlertDialogBuilder(requireContext()).apply {
-                setTitle(R.string.support_debuglog_label)
-                setMessage(R.string.settings_debuglog_explanation)
-                setPositiveButton(R.string.general_continue_action) { _, _ -> vm.startDebugLog() }
-                setNegativeButton(R.string.general_cancel_action) { _, _ -> }
-                setNeutralButton(R.string.settings_privacy_policy_label) { _, _ -> webpageTool.open(PrivacyPolicy.URL) }
-            }.show()
             true
         }
         super.onPreferencesCreated()
@@ -66,10 +50,25 @@ class SupportFragment : PreferenceFragment2() {
                 .show()
         }
 
-        vm.emailEvent.observe2(this) { startActivity(it) }
-
-        vm.isRecording.observe2(this) {
-            debugLogPref.isEnabled = !it
+        vm.isRecording.observe2(this) { isRecording ->
+            debugLogPref.setIcon(
+                if (isRecording) R.drawable.ic_cancel_24
+                else R.drawable.ic_bug_report_24
+            )
+            debugLogPref.setTitle(
+                if (isRecording) R.string.debug_debuglog_stop_action
+                else R.string.debug_debuglog_record_action
+            )
+            debugLogPref.setOnPreferenceClickListener {
+                if (isRecording) {
+                    vm.stopDebugLog()
+                } else {
+                    RecorderConsentDialog(requireContext(), webpageTool).showDialog {
+                        vm.startDebugLog()
+                    }
+                }
+                true
+            }
         }
 
         super.onViewCreated(view, savedInstanceState)

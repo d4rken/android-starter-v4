@@ -9,7 +9,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.androidstarter.common.datastore.PreferenceScreenData
 import eu.darken.androidstarter.common.datastore.PreferenceStoreMapper
 import eu.darken.androidstarter.common.datastore.createValue
-import eu.darken.androidstarter.common.debug.autoreport.DebugSettings
 import eu.darken.androidstarter.common.debug.logging.logTag
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +16,6 @@ import javax.inject.Singleton
 @Singleton
 class GeneralSettings @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val debugSettings: DebugSettings,
 ) : PreferenceScreenData {
 
     private val Context.dataStore by preferencesDataStore(name = "settings_core")
@@ -27,8 +25,10 @@ class GeneralSettings @Inject constructor(
 
     val deviceLabel = dataStore.createValue("core.device.label", Build.DEVICE)
 
+    val isAutoReportingEnabled = dataStore.createValue("debug.bugreport.automatic.enabled", true)
+
     override val mapper = PreferenceStoreMapper(
-        debugSettings.isAutoReportingEnabled,
+        isAutoReportingEnabled,
         deviceLabel
     )
 

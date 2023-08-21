@@ -9,6 +9,7 @@
             android:action="android.intent.action.VIEW"
             android:data="https://darken.eu" />
     </eu.darken.androidstarter.common.preferences.IntentPreference>
+
     <eu.darken.androidstarter.common.preferences.IntentPreference
         android:icon="@drawable/ic_github_onsurface"
         android:summary="@string/issue_tracker_description"
@@ -16,6 +17,15 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:data="https://github.com/d4rken/android-starter-v4" />
+    </eu.darken.androidstarter.common.preferences.IntentPreference>
+
+    <eu.darken.androidstarter.common.preferences.IntentPreference
+        android:icon="@drawable/ic_discord_24"
+        android:summary="@string/discord_description"
+        android:title="@string/discord_label">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://discord.gg/8Fjy6PTfXu" />
     </eu.darken.androidstarter.common.preferences.IntentPreference>
 
     <PreferenceCategory app:title="@string/settings_category_other_label">

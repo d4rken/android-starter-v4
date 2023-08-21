@@ -9,10 +9,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import eu.darken.androidstarter.BuildConfig
 import eu.darken.androidstarter.common.BuildConfigWrap
 import eu.darken.androidstarter.common.datastore.valueBlocking
-import eu.darken.androidstarter.common.debug.autoreport.DebugSettings
 import eu.darken.androidstarter.common.debug.logging.Logging.Priority.WARN
 import eu.darken.androidstarter.common.debug.logging.asLog
 import eu.darken.androidstarter.common.debug.logging.log
+import eu.darken.androidstarter.main.core.GeneralSettings
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 class BugsnagErrorHandler @Inject constructor(
     @ApplicationContext private val context: Context,
     private val bugsnagLogger: BugsnagLogger,
-    private val debugSettings: DebugSettings,
+    private val generalSettings: GeneralSettings,
 ) : OnErrorCallback {
 
     override fun onError(event: Event): Boolean {
@@ -35,7 +35,7 @@ class BugsnagErrorHandler @Inject constructor(
             context.tryFormattedSignature()?.let { event.addMetadata(tab, "signatures", it) }
         }
 
-        return debugSettings.isAutoReportingEnabled.valueBlocking && !BuildConfig.DEBUG
+        return generalSettings.isAutoReportingEnabled.valueBlocking && !BuildConfig.DEBUG
     }
 
     companion object {

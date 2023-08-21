@@ -16,9 +16,11 @@
     <string name="debug_debuglog_size_compressed_label">Compressed size</string>
     <string name="debug_notification_channel_label">Debug notifications</string>
     <string name="debug_debuglog_file_label">Recorded log file</string>
+    <string name="debug_debuglog_recording_progress">Recording debug log</string>
     <string name="debug_debuglog_record_action">Record debug log</string>
-    <string name="debug_debuglog_sensitive_information_message">This file contains sensitive information (e.g. your installed applications). Only share it with trusted parties.</string>
-    <string name="settings_debuglog_explanation">This feature records everything the app is doing into a shareable file. The generated file contains sensitive information (e.g. your installed applications). Only share it with trusted parties (e.g. the app developer if you are troubleshooting an issue together).</string>
+    <string name="debug_debuglog_stop_action">Stop recording</string>
+    <string name="debug_debuglog_sensitive_information_message">The generated file contains sensitive information. Only share it with trusted parties.</string>
+    <string name="settings_debuglog_explanation">This feature records everything the app is doing into a shareable file. The generated file may contain sensitive information. Only share it with trusted parties (e.g. a developer that is troubleshooting an issue).</string>
 
     <string name="settings_privacy_policy_label">Privacy policy</string>
     <string name="settings_privacy_policy_desc">Handling data responsibly.</string>
@@ -31,8 +33,8 @@
     <string name="changelog_label">Changelog</string>
     <string name="settings_acknowledgements_label">Acknowledgements</string>
     <string name="documentation_label">Documentation</string>
-    <string name="email_developer_label">Email developer</string>
-
+    <string name="discord_label">Discord</string>
+    <string name="discord_description">A place to hang out in and ask questions.</string>
     <string name="issue_tracker_label">Issue tracker</string>
     <string name="issue_tracker_description">A public issue tracker for bug reports and feature requests.</string>
 
