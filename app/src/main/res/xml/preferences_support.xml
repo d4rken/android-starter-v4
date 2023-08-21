@@ -2,25 +2,21 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Preference
+    <eu.darken.androidstarter.common.preferences.IntentPreference
         android:icon="@drawable/ic_card_text_onsurface"
         android:title="@string/documentation_label">
         <intent
             android:action="android.intent.action.VIEW"
             android:data="https://darken.eu" />
-    </Preference>
-    <Preference
+    </eu.darken.androidstarter.common.preferences.IntentPreference>
+    <eu.darken.androidstarter.common.preferences.IntentPreference
         android:icon="@drawable/ic_github_onsurface"
         android:summary="@string/issue_tracker_description"
         android:title="@string/issue_tracker_label">
         <intent
             android:action="android.intent.action.VIEW"
             android:data="https://github.com/d4rken/android-starter-v4" />
-    </Preference>
-    <Preference
-        android:icon="@drawable/ic_email_onsurface"
-        android:key="support.email.darken"
-        android:title="@string/email_developer_label" />
+    </eu.darken.androidstarter.common.preferences.IntentPreference>
 
     <PreferenceCategory app:title="@string/settings_category_other_label">
         <Preference
