@@ -151,6 +151,7 @@ dependencies {
     addWorker()
     addHttp()
     addErrorTracking()
+    addTesting()
 
     implementation("io.coil-kt:coil:2.4.0")
 
