@@ -38,6 +38,6 @@ class GithubReleaseCheck @Inject constructor(
     }
 
     companion object {
-        private val TAG = logTag("adsb.fi", "Endpoint")
+        private val TAG = logTag("GitHub", "Endpoint")
     }
 }
