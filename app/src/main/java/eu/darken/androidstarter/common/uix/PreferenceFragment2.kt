@@ -10,6 +10,8 @@ import androidx.annotation.XmlRes
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import eu.darken.androidstarter.common.datastore.PreferenceScreenData
 import eu.darken.androidstarter.common.debug.logging.Logging.Priority.VERBOSE
@@ -76,4 +78,6 @@ abstract class PreferenceFragment2 : PreferenceFragmentCompat() {
             }
         }
     }
+
+    fun NavDirections.navigate() = findNavController().navigate(this)
 }
