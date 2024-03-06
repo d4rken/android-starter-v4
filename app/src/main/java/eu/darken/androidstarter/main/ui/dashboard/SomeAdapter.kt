@@ -22,8 +22,8 @@ class SomeAdapter @Inject constructor() : ModularAdapter<SomeAdapter.ItemVH>(),
     override fun getItemCount(): Int = data.size
 
     init {
-        modules.add(DataBinderMod(data))
-        modules.add(SimpleVHCreatorMod { ItemVH(it) })
+        addMod(DataBinderMod(data))
+        addMod(SimpleVHCreatorMod { ItemVH(it) })
     }
 
     data class Item(
@@ -34,7 +34,7 @@ class SomeAdapter @Inject constructor() : ModularAdapter<SomeAdapter.ItemVH>(),
         override val stableId: Long = label.hashCode().toLong()
     }
 
-    class ItemVH(parent: ViewGroup) : ModularAdapter.VH(R.layout.some_item_line, parent),
+    class ItemVH(parent: ViewGroup) : VH(R.layout.some_item_line, parent),
         BindableVH<Item, SomeItemLineBinding> {
 
         override val viewBinding: Lazy<SomeItemLineBinding> = lazy {
