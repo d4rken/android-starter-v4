@@ -23,7 +23,6 @@ android {
         testInstrumentationRunner = "eu.darken.androidstarter.HiltTestRunner"
 
         buildConfigField("String", "PACKAGENAME", "\"${ProjectConfig.packageName}\"")
-        buildConfigField("String", "GITSHA", "\"${lastCommitHash()}\"")
         buildConfigField("String", "VERSION_CODE", "\"${ProjectConfig.Version.code}\"")
         buildConfigField("String", "VERSION_NAME", "\"${ProjectConfig.Version.name}\"")
 
@@ -94,7 +93,7 @@ android {
         if (listOf("release", "beta").any { variantName.toLowerCase().contains(it) }) {
             val outputFileName = ProjectConfig.packageName +
                     "-v${defaultConfig.versionName}-${defaultConfig.versionCode}" +
-                    "-${variantName.toUpperCase()}-${lastCommitHash()}.apk"
+                    "-${variantName.toUpperCase()}.apk"
 
             variantOutputImpl.outputFileName = outputFileName
         }
@@ -143,7 +142,7 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     addBase()
     addBaseUI()

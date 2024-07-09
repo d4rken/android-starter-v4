@@ -35,7 +35,7 @@ fun DependencyHandlerScope.addBase() {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 
-    val daggerVersion = "2.47"
+    val daggerVersion = "2.51.1"
     implementation("com.google.dagger:dagger:$daggerVersion")
     implementation("com.google.dagger:dagger-android:$daggerVersion")
 
@@ -67,9 +67,9 @@ fun DependencyHandlerScope.addBaseUI() {
     implementation("androidx.lifecycle:lifecycle-process:2.6.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
 
-    implementation("androidx.navigation:navigation-fragment-ktx:2.6.0")
-    implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
-    androidTestImplementation("androidx.navigation:navigation-testing:2.6.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
 
     implementation("androidx.preference:preference-ktx:1.2.0")
 

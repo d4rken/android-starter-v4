@@ -30,8 +30,6 @@ class BugsnagErrorHandler @Inject constructor(
             event.addMetadata(tab, "flavor", BuildConfigWrap.FLAVOR.toString())
             event.addMetadata(tab, "buildType", BuildConfigWrap.BUILD_TYPE.toString())
 
-            event.addMetadata(tab, "gitSha", BuildConfigWrap.GIT_SHA)
-
             context.tryFormattedSignature()?.let { event.addMetadata(tab, "signatures", it) }
         }
 
