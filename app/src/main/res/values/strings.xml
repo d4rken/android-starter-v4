@@ -11,6 +11,8 @@
     <string name="general_copy_action">Copy</string>
     <string name="general_continue_action">Continue</string>
     <string name="general_cancel_action">Cancel</string>
+    <string name="general_show_details_action">Show details</string>
+    <string name="general_error_no_compatible_app_found_msg">No compatible app found to handle this request.</string>
 
     <string name="debug_debuglog_size_label">Size</string>
     <string name="debug_debuglog_size_compressed_label">Compressed size</string>

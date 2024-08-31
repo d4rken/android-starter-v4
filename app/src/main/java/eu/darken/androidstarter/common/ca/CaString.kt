@@ -28,22 +28,33 @@ internal class CachedCaString(val resolv: (Context) -> String) : CaString {
             return cache
         }
     }
+
+    override fun toString(): String = if (::cache.isInitialized) {
+        "CachedCaString(\"$cache\")"
+    } else {
+        "CachedCaString(${Integer.toHexString(hashCode())})"
+    }
 }
 
-fun caString(provider: (Context) -> String): CaString = object : CaString {
-    override fun get(context: Context): String = provider(context)
+fun caString(provider: Context.(Context) -> String): CaString = object : CaString {
+    override fun get(context: Context): String = provider(context, context)
+}
+
+fun caString(direct: String): CaString = object : CaString {
+    override fun get(context: Context): String = direct
+    override fun toString(): String = "CaString(\"$direct\")"
 }
 
 fun CaString.cache(): CaString = CachedCaString { this.get(it) }
 
-fun String.toCaString(): CaString = caString { this }
+fun String.toCaString(): CaString = caString(this)
 
-fun ((Context) -> String).toCaString(): CaString = caString { this(it) }
+fun Int.toCaString(): CaString = caString { getString(this@toCaString) }.cache()
 
-fun Int.toCaString(): CaString = caString { it.getString(this) }.cache()
+fun Int.toCaString(vararg args: Any): CaString = caString { it.getString(this@toCaString, *args) }.cache()
 
 fun Pair<Int, Array<out Any?>>.toCaString() = caString {
-    val (res, args) = this
-    it.getString(res, args)
+    val (res, args) = this@toCaString
+    it.getString(res, *args)
 }.cache()
 
