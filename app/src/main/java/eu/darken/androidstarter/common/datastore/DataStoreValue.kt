@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 
 
-class DataStoreValue<T : Any?> constructor(
+class DataStoreValue<T : Any?>(
     private val dataStore: DataStore<Preferences>,
     private val key: Preferences.Key<*>,
     val reader: (Any?) -> T,
@@ -19,7 +19,9 @@ class DataStoreValue<T : Any?> constructor(
         get() = key.name
 
     val flow: Flow<T> = dataStore.data
-        .map { prefs -> reader(prefs[this.key]) }
+        .map { prefs -> prefs[this.key] }
+        .distinctUntilChanged()
+        .map { pref -> reader(pref) }
 
     data class Updated<T>(
         val old: T,
