@@ -19,9 +19,31 @@ title: "Changelog"
   {% assign clean_content = no_comments[0] | strip %}
 {% endif %}
 
+{% comment %} Make Full Changelog links clickable in ALL cases {% endcomment %}
+{% assign lines = clean_content | split: "
+" %}
+{% assign processed_lines = "" %}
+{% for line in lines %}
+  {% if line contains "**Full Changelog**:" %}
+    {% assign parts = line | split: ": " %}
+    {% if parts.size > 1 %}
+      {% assign url = parts[1] | strip %}
+      {% assign clickable_line = "**[Full Changelog](" | append: url | append: ")" %}
+      {% assign processed_lines = processed_lines | append: clickable_line | append: "
+" %}
+    {% else %}
+      {% assign processed_lines = processed_lines | append: line | append: "
+" %}
+    {% endif %}
+  {% else %}
+    {% assign processed_lines = processed_lines | append: line | append: "
+" %}
+  {% endif %}
+{% endfor %}
+
 {% comment %} Check if there are any bullet points (actual release notes) {% endcomment %}
-{% if clean_content contains "## " or clean_content contains "- " %}
-  {% assign spaced_content = clean_content | replace: "
+{% if processed_lines contains "## " or processed_lines contains "- " %}
+  {% assign spaced_content = processed_lines | replace: "
 - ", "
 
 - " %}
@@ -29,7 +51,7 @@ title: "Changelog"
 {% else %}
   *No release notes available.*
   
-  {{ clean_content | markdownify }}
+  {{ processed_lines | markdownify }}
 {% endif %}
 
 ---
