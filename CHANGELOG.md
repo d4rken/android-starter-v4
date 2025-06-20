@@ -19,18 +19,40 @@ title: "Changelog"
   {% assign clean_content = no_comments[0] | strip %}
 {% endif %}
 
-{% comment %} Make Full Changelog links clickable in ALL cases {% endcomment %}
+{% comment %} Make links clickable {% endcomment %}
 {% assign lines = clean_content | split: "
 " %}
 {% assign processed_lines = "" %}
 {% for line in lines %}
   {% if line contains "**Full Changelog**:" %}
+    {% comment %} Handle Full Changelog links {% endcomment %}
     {% assign parts = line | split: ": " %}
     {% if parts.size > 1 %}
       {% assign url = parts[1] | strip %}
-      {% assign clickable_line = "**[Full Changelog](" | append: url | append: ")" %}
+      {% assign clickable_line = "**[View Changes](" | append: url | append: ")**" %}
       {% assign processed_lines = processed_lines | append: clickable_line | append: "
 " %}
+    {% else %}
+      {% assign processed_lines = processed_lines | append: line | append: "
+" %}
+    {% endif %}
+  {% elsif line contains " in https://github.com/" and line contains "/pull/" %}
+    {% comment %} Handle pull request links {% endcomment %}
+    {% assign pr_parts = line | split: " in https://github.com/" %}
+    {% if pr_parts.size > 1 %}
+      {% assign before_url = pr_parts[0] %}
+      {% assign after_url = pr_parts[1] %}
+      {% assign url = "https://github.com/" | append: after_url %}
+      {% assign pr_number = after_url | split: "/pull/" %}
+      {% if pr_number.size > 1 %}
+        {% assign pr_num = pr_number[1] | split: " " | first %}
+        {% assign clickable_line = before_url | append: " in [#" | append: pr_num | append: "](" | append: url | append: ")" %}
+        {% assign processed_lines = processed_lines | append: clickable_line | append: "
+" %}
+      {% else %}
+        {% assign processed_lines = processed_lines | append: line | append: "
+" %}
+      {% endif %}
     {% else %}
       {% assign processed_lines = processed_lines | append: line | append: "
 " %}
