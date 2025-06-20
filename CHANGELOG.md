@@ -4,7 +4,7 @@ permalink: /changelog
 title: "Changelog"
 ---
 
-# Changelog for android-starter-v4
+# Changelog
 
 {% for release in site.github.releases %}
 
@@ -63,17 +63,27 @@ title: "Changelog"
   {% endif %}
 {% endfor %}
 
-{% comment %} Check if there are any bullet points (actual release notes) {% endcomment %}
-{% if processed_lines contains "## " or processed_lines contains "- " %}
-  {% assign spaced_content = processed_lines | replace: "
+{% comment %} Add proper spacing between sections and bullet points {% endcomment %}
+{% assign final_content = processed_lines | replace: "
+### ", "
+
+### " %}
+{% assign final_content = final_content | replace: "
+## ", "
+
+## " %}
+{% assign final_content = final_content | replace: "
 - ", "
 
 - " %}
-  {{ spaced_content | markdownify }}
+
+{% comment %} Check if there are any bullet points (actual release notes) {% endcomment %}
+{% if final_content contains "## " or final_content contains "- " %}
+  {{ final_content | markdownify }}
 {% else %}
   *No release notes available.*
   
-  {{ processed_lines | markdownify }}
+  {{ final_content | markdownify }}
 {% endif %}
 
 ---
