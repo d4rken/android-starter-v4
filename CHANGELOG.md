@@ -1,4 +1,5 @@
 ---
+layout: plain
 permalink: /changelog
 title: "Changelog"
 ---
