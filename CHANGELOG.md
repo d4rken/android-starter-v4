@@ -7,9 +7,12 @@ title: Changelog
 
 {% for release in site.github.releases %}
 
-## [{{ release.tag_name }}]({{ release.html_url }}) - {{ release.published_at | date: "%B %d, %Y" }}
+## {{ release.tag_name }} - {{ release.published_at | date: "%B %d, %Y" }}
 
-{{ release.body | markdownify }}
+{% assign formatted_body = release.body | replace: "- ", "
+
+- " %}
+  {{ formatted_body | markdownify }}
 
 ---
 {% endfor %}
